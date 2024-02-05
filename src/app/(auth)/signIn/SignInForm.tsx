@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,33 +16,57 @@ import {
 import { Input } from "@/components/ui/input";
 import { Typography } from "@/components/typography";
 import Link from "next/link";
-
-const formSchema = z.object({
-  email: z.string().min(2).max(50),
-  password: z.string().min(8).max(20),
-});
+import { SignInValidations } from "@/lib/validations";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
+import {
+  useCreateUserAccount,
+  useSignInAccount,
+} from "@/lib/react-query/queries";
+import { useUserContext } from "@/context/AuthContext";
+import { Loader } from "lucide-react";
 
 const SignInForm = () => {
-  // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const { mutateAsync: signInAccount, isPending: isLoggingIn } =
+    useSignInAccount();
+  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
+
+  const { toast } = useToast();
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof SignInValidations>>({
+    resolver: zodResolver(SignInValidations),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+  const handleSignIn = async (user: z.infer<typeof SignInValidations>) => {
+    const session = await signInAccount({
+      email: user.email,
+      password: user.password,
+    });
+
+    if (!session) {
+      console.log("hello");
+      return toast({ title: "Log in failed. Please try again." });
+    }
+
+    const isLoggedIn = await checkAuthUser();
+
+    if (isLoggedIn) {
+      form.reset();
+      router.push("/");
+    } else {
+      return toast({ title: "Log in failed. Please try again." });
+    }
+  };
   return (
     <Form {...form}>
       <div className="flex items-center justify-center">
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(handleSignIn)}
           className="space-y-5 w-full"
         >
           <FormField
@@ -75,7 +98,7 @@ const SignInForm = () => {
             )}
           />
           <Button type="submit" className="w-full">
-            Log in
+            {isLoggingIn ? <Loader /> : "Sign in"}
           </Button>
           <Typography variant={"muted"} className="text-center">
             Don't have an account?{" "}
