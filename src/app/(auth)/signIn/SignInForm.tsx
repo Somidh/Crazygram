@@ -13,6 +13,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+
 import { Input } from "@/components/ui/input";
 import { Typography } from "@/components/typography";
 import Link from "next/link";
@@ -101,7 +102,7 @@ const SignInForm = () => {
             {isLoggingIn ? <Loader /> : "Sign in"}
           </Button>
           <Typography variant={"muted"} className="text-center">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link className="text-blue-400" href={"/signUp"}>
               Sign up
             </Link>

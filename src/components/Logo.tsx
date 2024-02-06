@@ -1,18 +1,17 @@
-import Image from "next/image";
 import Link from "next/link";
-import React from "react";
-import logo from "@/assets/Images/logo.svg";
+import { Typography } from "./typography";
 
 const Logo = () => {
   return (
     <Link href={"/"}>
-      <Image
+      {/* <Image
         src={logo}
         alt="logo"
         height={133}
         width={133}
         className="cursor-pointer"
-      />
+      /> */}
+      <Typography variant={"h4"}>CrazyGram</Typography>
     </Link>
   );
 };
