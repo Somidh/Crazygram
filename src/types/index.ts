@@ -22,3 +22,11 @@ export type TContext = {
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
   checkAuthUser: () => Promise<boolean>;
 };
+
+export type TNewPost = {
+  userId: string;
+  caption: string;
+  file: File[];
+  location: string;
+  altText: string;
+};

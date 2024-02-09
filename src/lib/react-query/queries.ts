@@ -1,10 +1,12 @@
-import { useMutation } from "@tanstack/react-query";
+import { TNewPost, TNewUser } from "@/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  createPost,
   createUserAccount,
+  getAllPosts,
   signInAccount,
   signOutAccount,
 } from "../appwrite/api";
-import { TNewUser } from "@/types";
 
 export const useCreateUserAccount = () => {
   return useMutation({
@@ -22,5 +24,25 @@ export const useSignInAccount = () => {
 export const useSignOutAccount = () => {
   return useMutation({
     mutationFn: () => signOutAccount(),
+  });
+};
+
+export const useCreatePost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (post: TNewPost) => createPost(post),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["GET_RECENT_POSTS"],
+      });
+    },
+  });
+};
+
+export const useGetAllPosts = () => {
+  return useQuery({
+    queryKey: ["GET_ALL_POSTS"],
+    queryFn: getAllPosts,
   });
 };

@@ -31,7 +31,7 @@ const bottomBarLinks = [
 
 const Bottombar = () => {
   return (
-    <div className="md:hidden w-full opacity-30 absolute bottom-0 flex items-center justify-center px-4 py-4 bg-black border-t border-gray-800">
+    <div className="md:hidden w-full  fixed bottom-0 flex items-center justify-center px-4 py-4 bg-black border-t border-gray-800">
       <ul className="flex items-center gap-12 ">
         {bottomBarLinks.map((link, idx) => (
           <Link href={link.url} key={idx} aria-label={link.text}>

@@ -4,29 +4,27 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
+import { Typography } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Typography } from "@/components/typography";
-import Link from "next/link";
+import { useToast } from "@/components/ui/use-toast";
+import { useUserContext } from "@/context/AuthContext";
 import {
   useCreateUserAccount,
   useSignInAccount,
 } from "@/lib/react-query/queries";
-import { ToastAction } from "@/components/ui/toast";
-import { useToast } from "@/components/ui/use-toast";
-import { Loader } from "lucide-react";
 import { SignUpValidations } from "@/lib/validations";
+import { Loader } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useUserContext } from "@/context/AuthContext";
 
 const SignUpForm = () => {
   const { mutateAsync: createUserAccount, isPending: isCreatingAccount } =
@@ -48,7 +46,7 @@ const SignUpForm = () => {
     },
   });
 
-  const onSubmit = async (user: z.infer<typeof SignUpValidations>) => {
+  const handleSignUp = async (user: z.infer<typeof SignUpValidations>) => {
     try {
       const newUser = await createUserAccount(user);
       // console.log({ newUser });
@@ -83,7 +81,7 @@ const SignUpForm = () => {
     <Form {...form}>
       <div className="flex items-center justify-center">
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(handleSignUp)}
           className="space-y-5 w-full"
         >
           <FormField
