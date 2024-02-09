@@ -1,6 +1,8 @@
+import { useLikePost } from "@/lib/react-query/queries";
 import { Models } from "appwrite";
 import { MessageCircle, Send } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 import like from "../assets/Images/Icons/like.svg";
 import liked from "../assets/Images/Icons/liked.svg";
 import save from "../assets/Images/Icons/save.svg";
@@ -8,11 +10,31 @@ import saved from "../assets/Images/Icons/saved.svg";
 
 type PostStatsProp = {
   post: Models.Document;
+  userId: string;
 };
 
-const PostStats = ({ post }: PostStatsProp) => {
-  const isLiked = false;
+const PostStats = ({ post, userId }: PostStatsProp) => {
   const isSaved = false;
+
+  const likeList = post.likes.map((user: Models.Document) => user.$id);
+
+  const [likes, setLikes] = useState<Array<string>>(likeList);
+  const { mutateAsync: likePost } = useLikePost();
+  const handleLike = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+    e.stopPropagation();
+
+    let likesArray = [...likes];
+
+    if (likesArray.includes(userId)) {
+      likesArray = likesArray.filter((likeId) => likeId != userId);
+    } else {
+      likesArray.push(userId);
+    }
+
+    setLikes(likesArray);
+    likePost({ postId: post.$id, likesArray });
+  };
+  const isLiked = likes.includes(userId);
 
   return (
     <div>
@@ -24,6 +46,7 @@ const PostStats = ({ post }: PostStatsProp) => {
             width={100}
             height={100}
             className="w-7 h-7 cursor-pointer"
+            onClick={(e) => handleLike(e)}
           />
           <MessageCircle className="cursor-pointer w-7 h-7" />
           <Send className="cursor-pointer w-7 h-7" />

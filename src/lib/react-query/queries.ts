@@ -4,6 +4,7 @@ import {
   createPost,
   createUserAccount,
   getAllPosts,
+  likePost,
   signInAccount,
   signOutAccount,
 } from "../appwrite/api";
@@ -44,5 +45,32 @@ export const useGetAllPosts = () => {
   return useQuery({
     queryKey: ["GET_ALL_POSTS"],
     queryFn: getAllPosts,
+  });
+};
+
+export const useLikePost = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      postId,
+      likesArray,
+    }: {
+      postId: string;
+      likesArray: string[];
+    }) => likePost(postId, likesArray),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["GET_POST_BY_ID", data?.$id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["GET_RECENT_POSTS"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["GET_POSTS"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["GET_CURRENT_USER"],
+      });
+    },
   });
 };

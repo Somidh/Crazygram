@@ -193,3 +193,22 @@ export async function getAllPosts() {
     console.log(error);
   }
 }
+
+export async function likePost(postId: string, likesArray: string[]) {
+  try {
+    const updateLike = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      postId,
+      {
+        likes: likesArray,
+      },
+    );
+
+    if (!updateLike) throw Error;
+
+    return updateLike;
+  } catch (error) {
+    console.log(error);
+  }
+}
