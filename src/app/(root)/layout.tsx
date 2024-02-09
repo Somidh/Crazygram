@@ -1,4 +1,3 @@
-import Bottombar from "@/components/Bottombar";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 
@@ -11,8 +10,8 @@ export default function SetupLayout({ children }: SetupLayoutProp) {
     <div>
       <Navbar />
       <Sidebar />
-      {children}
-      <Bottombar />
+      <div className="px-4">{children}</div>
+      {/* <Bottombar /> */}
     </div>
   );
 }
