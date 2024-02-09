@@ -1,3 +1,4 @@
+import { useUserContext } from "@/context/AuthContext";
 import { Models } from "appwrite";
 import Image from "next/image";
 import PostStats from "./PostStats";
@@ -11,6 +12,10 @@ type PostCardProp = {
 export const PostCard = ({ post }: PostCardProp) => {
   console.log(post.creator);
   console.log({ post });
+
+  const { user } = useUserContext();
+
+  console.log({ user });
 
   if (!post.creator) return;
   return (
@@ -29,7 +34,9 @@ export const PostCard = ({ post }: PostCardProp) => {
             <Typography>{post.creator.name}</Typography>
           </div>
         </div>
-        <Button variant={"secondary"}>Follow</Button>
+        {user.id !== post.creator.$id && (
+          <Button variant={"default"}>Follow</Button>
+        )}
       </div>
 
       {/* POST IMAGE */}
@@ -45,7 +52,7 @@ export const PostCard = ({ post }: PostCardProp) => {
 
       {/* POST STATS */}
 
-      <PostStats post={post} />
+      <PostStats post={post} userId={user.id} />
     </div>
   );
 };
