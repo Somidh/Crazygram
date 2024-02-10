@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createPost,
   createUserAccount,
+  followUser,
   getAllPosts,
   likePost,
   signInAccount,
@@ -72,5 +73,24 @@ export const useLikePost = () => {
         queryKey: ["GET_CURRENT_USER"],
       });
     },
+  });
+};
+
+export const useFollowUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      userId,
+      followingArray,
+    }: {
+      userId: string;
+      followingArray: string[];
+    }) => followUser(userId, followingArray),
+    // onSuccess: (data) => {
+    //   queryClient.invalidateQueries({
+    //     queryKey:
+    //   })
+    // }
   });
 };
