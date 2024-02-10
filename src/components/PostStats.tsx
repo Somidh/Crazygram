@@ -19,6 +19,7 @@ const PostStats = ({ post, userId }: PostStatsProp) => {
   const likeList = post.likes.map((user: Models.Document) => user.$id);
 
   const [likes, setLikes] = useState<Array<string>>(likeList);
+  console.log({ likes });
   const { mutateAsync: likePost } = useLikePost();
   const handleLike = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
     e.stopPropagation();

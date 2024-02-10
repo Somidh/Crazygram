@@ -12,6 +12,8 @@ export type TUser = {
   email: string;
   imageUrl: string;
   bio: string;
+  following: string[];
+  followers: string[];
 };
 
 export type TContext = {

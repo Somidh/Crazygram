@@ -212,3 +212,20 @@ export async function likePost(postId: string, likesArray: string[]) {
     console.log(error);
   }
 }
+
+export async function followUser(userId: string, followingArray: string[]) {
+  try {
+    const updateFollowing = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      userId,
+      { following: followingArray },
+    );
+
+    if (!updateFollowing) throw Error;
+
+    return updateFollowing;
+  } catch (error) {
+    console.log(error);
+  }
+}
