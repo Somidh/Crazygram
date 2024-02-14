@@ -213,7 +213,12 @@ export async function likePost(postId: string, likesArray: string[]) {
   }
 }
 
-export async function followUser(userId: string, followingArray: string[]) {
+export async function followUser(
+  userId: string,
+  followerId: string,
+  followingArray: string[],
+  followersArray: string[],
+) {
   try {
     const updateFollowing = await databases.updateDocument(
       appwriteConfig.databaseId,
@@ -221,10 +226,33 @@ export async function followUser(userId: string, followingArray: string[]) {
       userId,
       { following: followingArray },
     );
-
     if (!updateFollowing) throw Error;
 
-    return updateFollowing;
+    const updateFollowers = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      followerId,
+      { followers: followersArray },
+    );
+
+    if (!updateFollowers) throw Error;
+
+    return { updateFollowing, updateFollowers };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getUserById(userId: string) {
+  try {
+    const user = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      userId,
+    );
+    if (!user) throw Error;
+
+    return user;
   } catch (error) {
     console.log(error);
   }

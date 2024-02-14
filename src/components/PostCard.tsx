@@ -2,6 +2,7 @@ import { useUserContext } from "@/context/AuthContext";
 import { useFollowUser } from "@/lib/react-query/queries";
 import { Models } from "appwrite";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import PostStats from "./PostStats";
 import { Typography } from "./typography";
@@ -13,38 +14,50 @@ type PostCardProp = {
 };
 
 export const PostCard = ({ post }: PostCardProp) => {
-  console.log({ post });
-
   const { user } = useUserContext();
   const { mutateAsync: followUser } = useFollowUser();
   //   const followingList = user.following.map((user: Models.Document) => user.$id);
 
   const [following, setFollowing] = useState<Array<string>>(user.following);
-  console.log({ user });
+  const [followers, setFollowers] = useState<Array<string>>(
+    post.creator.followers,
+  );
   const { toast } = useToast();
 
   if (!post.creator) return;
-
-  console.log({ following });
 
   const handleFollow = (e: React.MouseEvent) => {
     e.stopPropagation();
 
     let followingArray = [...following];
+    let followersArray = [...followers];
 
     if (followingArray.includes(post.creator.$id)) {
       followingArray = followingArray.filter(
         (followingId) => followingId !== post.creator.$id,
       );
+      followersArray = followersArray.filter(
+        (followersId) => followersId !== user.id,
+      );
     } else {
       followingArray.push(post?.creator?.$id);
+      followersArray.push(user.id);
       toast({ title: "Followed success" });
     }
 
     setFollowing(followingArray);
-    followUser({ userId: user.id, followingArray });
+    setFollowers(followersArray);
+    followUser({
+      userId: user.id,
+      followerId: post.creator.$id,
+      followingArray,
+      followersArray,
+    });
   };
   const isFollowing = following?.includes(post.creator.$id);
+
+  console.log({ post });
+  console.log({ followers });
 
   return (
     <div className="w-full border border-gray-800 p-2">
@@ -58,9 +71,9 @@ export const PostCard = ({ post }: PostCardProp) => {
             height={100}
             className="w-8 h-8 rounded-full object-cover "
           />
-          <div>
+          <Link href={`/${post.creator.$id}`}>
             <Typography>{post.creator.name}</Typography>
-          </div>
+          </Link>
         </div>
         {user.id !== post.creator.$id && (
           <Button variant={"default"} onClick={(e) => handleFollow(e)}>

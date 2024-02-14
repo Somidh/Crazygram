@@ -5,6 +5,7 @@ import {
   createUserAccount,
   followUser,
   getAllPosts,
+  getUserById,
   likePost,
   signInAccount,
   signOutAccount,
@@ -82,15 +83,26 @@ export const useFollowUser = () => {
   return useMutation({
     mutationFn: ({
       userId,
+      followerId,
       followingArray,
+      followersArray,
     }: {
       userId: string;
+      followerId: string;
       followingArray: string[];
-    }) => followUser(userId, followingArray),
+      followersArray: string[];
+    }) => followUser(userId, followerId, followingArray, followersArray),
     // onSuccess: (data) => {
     //   queryClient.invalidateQueries({
     //     queryKey:
     //   })
     // }
+  });
+};
+
+export const useGetUserById = (userId: string) => {
+  return useQuery({
+    queryKey: ["GET_USER_BY_ID"],
+    queryFn: () => getUserById(userId),
   });
 };
