@@ -16,7 +16,6 @@ type PostCardProp = {
 export const PostCard = ({ post }: PostCardProp) => {
   const { user } = useUserContext();
   const { mutateAsync: followUser } = useFollowUser();
-  //   const followingList = user.following.map((user: Models.Document) => user.$id);
 
   const [following, setFollowing] = useState<Array<string>>(user.following);
   const [followers, setFollowers] = useState<Array<string>>(
@@ -55,9 +54,6 @@ export const PostCard = ({ post }: PostCardProp) => {
     });
   };
   const isFollowing = following?.includes(post.creator.$id);
-
-  console.log({ post });
-  console.log({ followers });
 
   return (
     <div className="w-full border border-gray-800 p-2">

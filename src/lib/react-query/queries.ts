@@ -102,7 +102,8 @@ export const useFollowUser = () => {
 
 export const useGetUserById = (userId: string) => {
   return useQuery({
+    enabled: !!userId,
     queryKey: ["GET_USER_BY_ID"],
-    queryFn: () => getUserById(userId),
+    queryFn: () => (userId ? getUserById(userId) : Promise.resolve(null)),
   });
 };

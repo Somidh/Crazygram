@@ -2,8 +2,10 @@
 
 import { Typography } from "@/components/typography";
 import { Button } from "@/components/ui/button";
+import { useUserContext } from "@/context/AuthContext";
 import { Models } from "appwrite";
 import Image from "next/image";
+import Link from "next/link";
 
 type UserProfileHeaderProps = {
   user: Models.Document;
@@ -12,25 +14,30 @@ type UserProfileHeaderProps = {
 type StatsType = {
   title: string;
   count: number;
+  link: string;
 }[];
 
 export const UserProfileHeader = ({ user }: UserProfileHeaderProps) => {
-  console.log({ user });
-
   const stats: StatsType = [
     {
       title: "post",
-      count: user.posts.length + 1,
+      count: user.posts.length,
+      link: "#",
     },
     {
       title: "followers",
-      count: user.followers.length + 1,
+      count: user.followers.length,
+      link: `${user.$id}/followers`,
     },
     {
       title: "following",
-      count: user.following.length + 1,
+      count: user.following.length,
+      link: `${user.$id}/followings`,
     },
   ];
+
+  const { user: currentUser } = useUserContext();
+  const isCurrentUser = currentUser.id === user.$id;
 
   return (
     <header className="flex items-start gap-6 ">
@@ -45,7 +52,7 @@ export const UserProfileHeader = ({ user }: UserProfileHeaderProps) => {
       </section>
       <section className="w-full space-y-3">
         {/* NAME/USERNAME */}
-        <div className="flex items-center justify-between ">
+        <div className="flex items-center justify-between">
           <div>
             <Typography variant={"h3"} className="capitalize">
               {user.name}
@@ -54,18 +61,22 @@ export const UserProfileHeader = ({ user }: UserProfileHeaderProps) => {
               @{user.username}
             </Typography>
           </div>
-          <div>
-            <Button>Follow</Button>
-          </div>
+          {!isCurrentUser && (
+            <div>
+              <Button>Follow</Button>
+            </div>
+          )}
         </div>
         {/* USER STATS */}
         <div>
           <ul className="flex items-center justify-between gap-5 w-full">
             {stats.map((stat, idx) => (
-              <li key={idx} className="flex flex-col items-center gap-2">
-                <Typography>{stat.count}</Typography>
-                <Typography variant={"small"}>{stat.title}</Typography>
-              </li>
+              <Link href={stat.link} key={idx}>
+                <li className="flex flex-col items-center gap-2">
+                  <Typography>{stat.count}</Typography>
+                  <Typography variant={"small"}>{stat.title}</Typography>
+                </li>
+              </Link>
             ))}
           </ul>
         </div>
