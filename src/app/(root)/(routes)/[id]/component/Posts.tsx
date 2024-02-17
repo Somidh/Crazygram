@@ -18,11 +18,11 @@ const Posts = ({ id }: PostsProps) => {
         <Loader />
       </div>
     );
+  console.log("Post", user.posts);
 
   return (
     <div className="w-full grid grid-cols-3 gap-1 max-w-5xl">
       {user?.posts.map((post: any) => {
-        console.log({ post });
         return (
           <div key={post?.$id} className="">
             <Image
