@@ -17,7 +17,6 @@ const PostDetailsPage = ({
         <Loader />
       </div>
     );
-
   return (
     <div>
       <PostCard post={post} />
