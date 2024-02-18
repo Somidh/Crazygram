@@ -24,7 +24,7 @@ const Posts = ({ id }: PostsProps) => {
     <div className="w-full grid grid-cols-3 gap-1 max-w-5xl">
       {user?.posts.map((post: any) => {
         return (
-          <div key={post?.$id} className="">
+          <div key={post?.$id}>
             <Image
               src={post?.imageUrl}
               alt="image"

@@ -5,6 +5,7 @@ import {
   createUserAccount,
   followUser,
   getAllPosts,
+  getPostById,
   getUserById,
   likePost,
   signInAccount,
@@ -102,8 +103,16 @@ export const useFollowUser = () => {
 
 export const useGetUserById = (userId: string) => {
   return useQuery({
+    queryKey: ["GET_USER_BY_ID", userId],
+    queryFn: () => getUserById(userId),
     enabled: !!userId,
-    queryKey: ["GET_USER_BY_ID"],
-    queryFn: () => (userId ? getUserById(userId) : Promise.resolve(null)),
+  });
+};
+
+export const useGetPostById = (postId: string) => {
+  return useQuery({
+    queryKey: ["GET_POST_BY_ID", postId],
+    queryFn: () => getPostById(postId),
+    enabled: !!postId,
   });
 };

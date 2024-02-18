@@ -56,21 +56,26 @@ export const PostCard = ({ post }: PostCardProp) => {
   const isFollowing = following?.includes(post.creator.$id);
 
   return (
-    <div className="w-full border border-gray-800 p-2">
+    <div className="w-full p-2">
       {/* POST HEADER */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Image
-            src={post.creator.imageUrl}
-            alt="avatar"
-            width={100}
-            height={100}
-            className="w-8 h-8 rounded-full object-cover "
-          />
+          <Link href={""}>
+            <Image
+              src={post.creator.imageUrl}
+              alt="avatar"
+              width={100}
+              height={100}
+              className="w-8 h-8 rounded-full object-cover "
+            />
+          </Link>
+
           <Link href={`/${post.creator.$id}`}>
             <Typography>{post.creator.name}</Typography>
           </Link>
         </div>
+        {/* ------------------TODO------------------- */}
+        {/* REMOVE FOLLOW BUTTON FROM HERE */}
         {user.id !== post.creator.$id && (
           <Button variant={"default"} onClick={(e) => handleFollow(e)}>
             {isFollowing ? "Unfollow" : "Follow"}
@@ -79,15 +84,17 @@ export const PostCard = ({ post }: PostCardProp) => {
       </div>
 
       {/* POST IMAGE */}
-      <div className="w-full h-96 mb-2 ">
-        <Image
-          src={post.imageUrl}
-          alt="post-image"
-          width={500}
-          height={500}
-          className="w-full h-full object-cover rounded-md "
-        />
-      </div>
+      <Link href={`${user.id}/post/${post.$id}`}>
+        <div className="w-full h-96 mb-2 ">
+          <Image
+            src={post.imageUrl}
+            alt="post-image"
+            width={500}
+            height={500}
+            className="w-full h-full object-cover rounded-md "
+          />
+        </div>
+      </Link>
 
       {/* POST STATS */}
 
