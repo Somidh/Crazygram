@@ -1,6 +1,7 @@
 import { TNewPost, TNewUser } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  createComment,
   createPost,
   createUserAccount,
   followUser,
@@ -114,5 +115,24 @@ export const useGetPostById = (postId: string) => {
     queryKey: ["GET_POST_BY_ID", postId],
     queryFn: () => getPostById(postId),
     enabled: !!postId,
+  });
+};
+
+export const useCreateComment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      postId,
+      comments,
+    }: {
+      postId: string;
+      comments: string[];
+    }) => createComment(postId, comments),
+    onSuccess: (postId) => {
+      queryClient.invalidateQueries({
+        queryKey: ["GET_COMMENTS_BY_POST_ID", postId],
+      });
+    },
   });
 };
