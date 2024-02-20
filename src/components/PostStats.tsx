@@ -20,6 +20,7 @@ const PostStats = ({ post, userId }: PostStatsProp) => {
 
   const [likes, setLikes] = useState<Array<string>>(likeList);
   const { mutateAsync: likePost } = useLikePost();
+
   const handleLike = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
     e.stopPropagation();
 

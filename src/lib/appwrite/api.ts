@@ -273,3 +273,22 @@ export async function getPostById(postId: string) {
     console.log(error);
   }
 }
+
+export async function createComment(postId: string, comments: string[]) {
+  try {
+    const newComment = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      postId,
+      {
+        com: comments,
+      },
+    );
+
+    if (!newComment) throw Error;
+
+    return newComment;
+  } catch (error) {
+    console.log(error);
+  }
+}

@@ -10,7 +10,7 @@ const HomePage = () => {
     <div>
       {posts?.documents.map((post: Models.Document) => {
         return (
-          <div key={post.$id} className="mb-10  border border-gray-800">
+          <div key={post.$id} className="mb-10  border border-gray-800 p-2">
             <PostCard post={post} />
           </div>
         );

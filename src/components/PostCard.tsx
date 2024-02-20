@@ -56,7 +56,7 @@ export const PostCard = ({ post }: PostCardProp) => {
   const isFollowing = following?.includes(post.creator.$id);
 
   return (
-    <div className="w-full p-2">
+    <div className="w-full ">
       {/* POST HEADER */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">

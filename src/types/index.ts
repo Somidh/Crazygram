@@ -32,3 +32,9 @@ export type TNewPost = {
   location: string;
   altText: string;
 };
+
+export type TComment = {
+  comment: string;
+  postId: string;
+  parentId?: string;
+};
