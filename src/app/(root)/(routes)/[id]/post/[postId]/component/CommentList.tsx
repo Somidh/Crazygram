@@ -27,6 +27,7 @@ const CommentList = ({ comments }: CommentsListProps) => {
       </div>
     );
   });
+
 };
 
 export default CommentList;

@@ -24,6 +24,7 @@ const Comment = ({ comment }: { comment: CommentProps }) => {
 
   console.log({ childComments });
 
+
   return (
     <>
       <div className="border border-gray-800 w-full p-4 space-y-4 ">
@@ -73,6 +74,7 @@ const Comment = ({ comment }: { comment: CommentProps }) => {
           </div>
         </>
       )}
+
     </>
   );
 };

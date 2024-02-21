@@ -21,6 +21,7 @@ const PostDetailsPage = ({
   const flattenedComments = rootComments?.flatMap((innerArray) => innerArray);
   console.log({ flattenedComments });
 
+
   if (!post)
     return (
       <div className="flex-center w-full h-full">

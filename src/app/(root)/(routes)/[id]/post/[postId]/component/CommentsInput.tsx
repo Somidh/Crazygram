@@ -33,6 +33,7 @@ const FormSchema = z.object({
   id: z.string(),
   comment: z.string().min(10),
   parentId: z.string().optional(),
+
 });
 
 const CommentsInput = ({ post }: CommentsInputProps) => {
@@ -84,6 +85,7 @@ const CommentsInput = ({ post }: CommentsInputProps) => {
     // } catch (error) {
     //   console.error("Error creating comment:", error);
     // }
+
 
     form.reset();
   };
