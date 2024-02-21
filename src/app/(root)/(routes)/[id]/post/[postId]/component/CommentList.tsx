@@ -2,26 +2,31 @@ import { Models } from "appwrite";
 import Comment from "./Comment";
 
 type Comment = {
+  id: string;
   message: string;
   parentId: string;
-  createdAt: string;
-  updatedAt?: string;
+  // post: Models.Document;
 };
 
 type CommentsListProps = {
-  post: Models.Document;
+  post?: Models.Document;
+  comments?: Comment[];
 };
 
-const CommentList = ({ post }: CommentsListProps) => {
-  const parsedComment = post.com.map((post: string) => JSON.parse(post));
+const CommentList = ({ comments }: CommentsListProps) => {
+  // const parsedComment = post?.com?.map((post: string) => JSON.parse(post));
 
-  console.log(parsedComment);
+  // const flattenedComments = comments?.flatMap((innerArray) => innerArray);
+  console.log("yolo", comments);
 
-  return parsedComment.map((comment: Comment, idx: number) => (
-    <div key={idx} className="mb-2">
-      <Comment message={comment?.message} createdAt={comment.createdAt} />
-    </div>
-  ));
+  return comments?.map((comment: Comment, idx: number) => {
+    return (
+      <div key={idx} className="mb-2">
+        <Comment comment={comment} />
+        {/* <Comment message={comment?.message} post={post} id={comment.id} /> */}
+      </div>
+    );
+  });
 };
 
 export default CommentList;

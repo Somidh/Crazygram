@@ -1,6 +1,7 @@
 "use client";
 
 import { PostCard } from "@/components/PostCard";
+import { usePost } from "@/context/PostContext";
 import { useGetPostById } from "@/lib/react-query/queries";
 import { Loader } from "lucide-react";
 import CommentList from "./component/CommentList";
@@ -15,6 +16,11 @@ const PostDetailsPage = ({
 
   console.log({ post });
 
+  const { rootComments } = usePost();
+
+  const flattenedComments = rootComments?.flatMap((innerArray) => innerArray);
+  console.log({ flattenedComments });
+
   if (!post)
     return (
       <div className="flex-center w-full h-full">
@@ -28,7 +34,7 @@ const PostDetailsPage = ({
         <CommentsInput post={post} />
       </div>
       <div className="mt-5">
-        <CommentList post={post} />
+        <CommentList post={post} comments={flattenedComments} />
       </div>
     </div>
   );

@@ -10,23 +10,22 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { useCreateComment } from "@/lib/react-query/queries";
-import { Models } from "appwrite";
+import { useCreateComment, useGetPostById } from "@/lib/react-query/queries";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-type CommentsInputProps = {
-  post: Models.Document;
-};
-
+//
 type Comment = {
   id: string;
   message: string;
   parentId?: string;
+};
+type ReplyFormProps = {
+  id: string;
 };
 
 const FormSchema = z.object({
@@ -35,63 +34,48 @@ const FormSchema = z.object({
   parentId: z.string().optional(),
 });
 
-const CommentsInput = ({ post }: CommentsInputProps) => {
+const ReplyForm = ({ id }: ReplyFormProps) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       id: "",
       comment: "",
+      parentId: "",
     },
   });
 
-  const { mutateAsync: createComment } = useCreateComment();
-  const parsedComment = post.com.map((comment: string) => comment);
-  const [comments, setComments] = useState<string[]>(parsedComment);
+  const params = useParams<{ postId: string }>();
 
-  const handleCreateComment = async (data: z.infer<typeof FormSchema>) => {
+  const { mutateAsync: createComment } = useCreateComment();
+  const { data: post } = useGetPostById(params.postId);
+  const parsedComment = post?.com.map((comment: string) => comment);
+  const [comments, setComments] = useState<string[]>(parsedComment);
+  //   const queryClient = useQueryClient();
+
+  if (!post) return <h1>Loading..</h1>;
+
+  const handleReplyComment = async (data: z.infer<typeof FormSchema>) => {
     const { comment } = data;
 
-    let newComment: Comment = {
+    const newReply: Comment = {
       id: uuidv4(),
       message: comment,
+      parentId: id,
     };
 
-    const str = JSON.stringify(newComment);
+    const str = JSON.stringify(newReply);
 
-    createComment({ postId: post.$id, comments: [str, ...comments] });
+    createComment({ postId: post?.$id, comments: [str, ...comments] });
     setComments((prev) => [str, ...prev]);
     form.reset();
 
-    // try {
-    //   const str = JSON.stringify(newComment);
-    //   const createdComment = await createComment({
-    //     postId: post.$id,
-    //     comments: [str, ...comments],
-    //   });
-
-    //   // Extract createdAt from createdComment and assign it to createdDate field
-    //   newComment.createdDate = createdComment?.createdAt;
-    //   // Update state with the new comment
-    //   setComments((prev) => [str, ...prev]);
-
-    //   // Optionally, you can perform additional actions with the created comment here
-    //   console.log("Newly created comment:", createdComment);
-
-    //   // Invalidate the query to refetch the comments for the post
-    //   queryClient.invalidateQueries({
-    //     queryKey: ["GET_COMMENTS_BY_POST_ID", post.$id],
-    //   });
-    // } catch (error) {
-    //   console.error("Error creating comment:", error);
-    // }
-
-    form.reset();
+    console.log({ data });
   };
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(handleCreateComment)}
+        onSubmit={form.handleSubmit(handleReplyComment)}
         className="w-full  space-y-2"
       >
         <FormField
@@ -99,7 +83,7 @@ const CommentsInput = ({ post }: CommentsInputProps) => {
           name="comment"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Add a comment</FormLabel>
+              {/* <FormLabel>Add a reply</FormLabel> */}
               <FormControl>
                 <Textarea
                   placeholder="What are your thoughts?"
@@ -114,10 +98,10 @@ const CommentsInput = ({ post }: CommentsInputProps) => {
             </FormItem>
           )}
         />
-        <Button type="submit">Post comment</Button>
+        <Button type="submit">Reply</Button>
       </form>
     </Form>
   );
 };
 
-export default CommentsInput;
+export default ReplyForm;

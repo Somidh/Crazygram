@@ -1,4 +1,5 @@
 import { useLikePost } from "@/lib/react-query/queries";
+import { formatDate } from "@/lib/utils";
 import { Models } from "appwrite";
 import { MessageCircle, Send } from "lucide-react";
 import Image from "next/image";
@@ -64,6 +65,7 @@ const PostStats = ({ post, userId }: PostStatsProp) => {
       </div>
       <p>10 likes</p>
       <p>{`${post.creator.name} ${post.caption}`}</p>
+      <p>{formatDate(post.$createdAt)}</p>
     </div>
   );
 };

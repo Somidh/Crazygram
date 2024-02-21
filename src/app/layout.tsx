@@ -1,6 +1,7 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import AuthProvider from "@/context/AuthContext";
+import PostProvider from "@/context/PostContext";
 import { QueryProvider } from "@/lib/react-query/QueryProvider";
 import type { Metadata } from "next";
 import "../styles/globals.css";
@@ -27,7 +28,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              <PostProvider>{children}</PostProvider>
+            </AuthProvider>
           </ThemeProvider>
         </QueryProvider>
         <Toaster />
