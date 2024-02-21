@@ -54,3 +54,8 @@ export function formatDate(dateString: string) {
     return `Just now`;
   }
 }
+
+export const dateFormatter = new Intl.DateTimeFormat(undefined, {
+  dateStyle: "medium",
+  timeStyle: "short",
+});
