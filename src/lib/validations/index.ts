@@ -28,3 +28,9 @@ export const PostValidation = z.object({
   location: z.string(),
   altText: z.string().min(2).max(20),
 });
+
+export const CommentFormValidation = z.object({
+  id: z.string(),
+  commentText: z.string().min(10),
+  parentId: z.string().optional(),
+});

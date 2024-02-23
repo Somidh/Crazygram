@@ -33,8 +33,16 @@ export type TNewPost = {
   altText: string;
 };
 
+export type TCommentUser = {
+  id: string;
+  name: string;
+  imageUrl?: string;
+};
+
 export type TComment = {
-  comment: string;
-  postId: string;
+  id: string;
+  commentText: string;
+  // postId?: string;
   parentId?: string;
+  user?: TCommentUser;
 };
