@@ -91,7 +91,7 @@ export async function getCurrentUser() {
 
     if (!currentUser) throw Error;
 
-    return currentUser.documents[0];
+    return currentUser?.documents[0];
   } catch (error) {
     console.log(error);
   }
@@ -285,8 +285,50 @@ export async function createComment(postId: string, comments: string[]) {
       },
     );
 
+    console.log({ newComment });
+
     if (!newComment) throw Error;
 
+    return newComment;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function updateComment(
+  postId: string,
+  commentId: string,
+  updatedText: string,
+) {
+  try {
+    const post = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      postId,
+    );
+    if (!post) throw Error;
+
+    const updatedComments = post.com.map((comment: string) => {
+      const parsedComment = JSON.parse(comment);
+      if (parsedComment.id === commentId) {
+        // Update the comment text
+        parsedComment.commentText = updatedText;
+      }
+
+      return JSON.stringify(parsedComment);
+    });
+
+    const newComment = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      postId,
+      {
+        com: updatedComments,
+      },
+    );
+
+    console.log("UpdatedComment:", newComment);
+    if (!newComment) throw Error;
     return newComment;
   } catch (error) {
     console.log(error);

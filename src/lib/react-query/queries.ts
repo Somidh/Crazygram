@@ -6,11 +6,13 @@ import {
   createUserAccount,
   followUser,
   getAllPosts,
+  getCurrentUser,
   getPostById,
   getUserById,
   likePost,
   signInAccount,
   signOutAccount,
+  updateComment,
 } from "../appwrite/api";
 
 export const useCreateUserAccount = () => {
@@ -110,6 +112,13 @@ export const useGetUserById = (userId: string) => {
   });
 };
 
+export const useGetCurrentUser = () => {
+  return useQuery({
+    queryKey: ["GET_CURRENT_USER"],
+    queryFn: getCurrentUser,
+  });
+};
+
 export const useGetPostById = (postId: string) => {
   return useQuery({
     queryKey: ["GET_POST_BY_ID", postId],
@@ -119,8 +128,6 @@ export const useGetPostById = (postId: string) => {
 };
 
 export const useCreateComment = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: ({
       postId,
@@ -129,10 +136,19 @@ export const useCreateComment = () => {
       postId: string;
       comments: string[];
     }) => createComment(postId, comments),
-    onSuccess: (postId) => {
-      queryClient.invalidateQueries({
-        queryKey: ["GET_COMMENTS_BY_POST_ID", postId],
-      });
-    },
+  });
+};
+
+export const useUpdateComment = () => {
+  return useMutation({
+    mutationFn: ({
+      postId,
+      commentId,
+      updatedText,
+    }: {
+      postId: string;
+      commentId: string;
+      updatedText: string;
+    }) => updateComment(postId, commentId, updatedText),
   });
 };

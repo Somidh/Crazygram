@@ -9,6 +9,10 @@ import { useParams } from "next/navigation";
 type GroupType = {
   [parentId: string]: Comment[];
 };
+type User = {
+  id: string | undefined;
+  name: string | undefined;
+};
 
 type INITIAL_STATE_Type = {
   post: {
@@ -20,8 +24,9 @@ type INITIAL_STATE_Type = {
 };
 type Comment = {
   id: string;
-  message: string;
+  commentText: string;
   parentId: string;
+  user: User;
 };
 
 const INITIAL_STATE: INITIAL_STATE_Type = {
@@ -41,7 +46,12 @@ export function usePost() {
 const PostProvider = ({ children }: { children: React.ReactNode }) => {
   const params = useParams<{ postId: string }>();
 
-  const { data: post, isPending, error } = useGetPostById(params.postId);
+  const {
+    data: post,
+    isLoading,
+    error,
+    isPending,
+  } = useGetPostById(params.postId);
   const [comments, setComments] = useState([]);
   const parsedComment = post?.com.map((post: string) => JSON.parse(post));
 
@@ -54,7 +64,6 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
 
     return group;
   }, [post?.com]);
-
   console.log({ commentByParentId });
 
   // useEffect(() => {
@@ -82,7 +91,6 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   const undefinedReplies = getUndefinedReplies(commentByParentId);
-  console.log(undefinedReplies);
   return (
     <Context.Provider
       value={{
@@ -91,7 +99,7 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
         rootComments: undefinedReplies,
       }}
     >
-      {isPending ? (
+      {isLoading ? (
         <Typography variant={"h1"}>Loading...</Typography>
       ) : error ? (
         <Typography variant={"h1"}>{error.message}</Typography>
