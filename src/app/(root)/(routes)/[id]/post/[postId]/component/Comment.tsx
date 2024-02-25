@@ -4,6 +4,7 @@ import { Typography } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import { usePost } from "@/context/PostContext";
 import {
+  useDeleteComment,
   useGetCurrentUser,
   useGetPostById,
   useToggleLikeComment,
@@ -22,7 +23,9 @@ const Comment = ({ comment }: { comment: TComment }) => {
   const [areChildrenHidden, setAreChildrenHidden] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const { mutateAsync: toggleLikeComment } = useToggleLikeComment();
+  const { mutateAsync: deleteComment, isSuccess } = useDeleteComment();
   const params = useParams<{ postId: string }>();
+  const { deleteLocalComment } = usePost();
 
   const { getReplies } = usePost();
   const { data: currentUser } = useGetCurrentUser();
@@ -34,6 +37,9 @@ const Comment = ({ comment }: { comment: TComment }) => {
   const [likes, setLikes] = useState<Array<string>>(comment.likes);
   if (!user) {
     return <div>loading...</div>;
+  }
+  if (isSuccess) {
+    console.log("comment deleted succfully");
   }
 
   function handleLike(e: React.MouseEvent<HTMLImageElement, MouseEvent>) {
@@ -60,6 +66,14 @@ const Comment = ({ comment }: { comment: TComment }) => {
       commentLikesArray,
       userId: user.$id,
     });
+  }
+
+  function handleDeleteComment() {
+    if (!post) {
+      return <div>loading...</div>;
+    }
+    deleteComment({ postId: post.$id, commentId: comment.id });
+    deleteLocalComment(comment.id);
   }
   const isLiked = likes?.includes(user.$id);
 
@@ -110,7 +124,10 @@ const Comment = ({ comment }: { comment: TComment }) => {
                   onClick={() => setIsEditing((prev) => !prev)}
                   className="cursor-pointer"
                 />
-                <Trash />
+                <Trash
+                  onClick={handleDeleteComment}
+                  className="cursor-pointer"
+                />
               </div>
             )}
           </div>

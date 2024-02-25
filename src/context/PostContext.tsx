@@ -21,6 +21,7 @@ type INITIAL_STATE_Type = {
   rootComments: TComment[] | undefined;
   createLocalComment: (comment: TComment) => void;
   updateLocalComment: (commentId: string, commentText: string) => void;
+  deleteLocalComment: (commentId: string) => void;
 };
 // type Comment = {
 //   id: string;
@@ -39,6 +40,7 @@ const INITIAL_STATE: INITIAL_STATE_Type = {
   rootComments: undefined,
   createLocalComment: () => {},
   updateLocalComment: () => {},
+  deleteLocalComment: () => {},
 };
 const Context = createContext(INITIAL_STATE);
 
@@ -117,6 +119,14 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
       });
     });
   }
+
+  function deleteLocalComment(commentId: string) {
+    setComments((prevComments: TComment[]) => {
+      return prevComments.filter(
+        (comment: TComment) => comment.id !== commentId,
+      );
+    });
+  }
   function getUndefinedReplies(commentByParentId: Record<string, any>) {
     // Get all keys of commentByParentId
     const keys = Object.keys(commentByParentId);
@@ -142,6 +152,7 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
         rootComments: undefinedReplies,
         createLocalComment,
         updateLocalComment,
+        deleteLocalComment,
       }}
     >
       {isLoading ? (

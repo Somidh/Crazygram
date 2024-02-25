@@ -4,6 +4,7 @@ import {
   createComment,
   createPost,
   createUserAccount,
+  deleteComment,
   followUser,
   getAllPosts,
   getCurrentUser,
@@ -151,6 +152,18 @@ export const useUpdateComment = () => {
       commentId: string;
       updatedText: string;
     }) => updateComment(postId, commentId, updatedText),
+  });
+};
+
+export const useDeleteComment = () => {
+  return useMutation({
+    mutationFn: ({
+      postId,
+      commentId,
+    }: {
+      postId: string;
+      commentId: string;
+    }) => deleteComment(postId, commentId),
   });
 };
 

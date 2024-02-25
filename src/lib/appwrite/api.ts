@@ -1,4 +1,4 @@
-import { TNewPost, TNewUser } from "@/types";
+import { TComment, TNewPost, TNewUser } from "@/types";
 import { ID, Query } from "appwrite";
 import Error from "next/error";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
@@ -329,6 +329,45 @@ export async function updateComment(
 
     console.log("UpdatedComment:", newComment);
     if (!newComment) throw Error;
+    return newComment;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function deleteComment(postId: string, commentId: string) {
+  try {
+    const post = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      postId,
+    );
+
+    if (!post) throw Error;
+
+    console.log({ post });
+    const parsedComment = post.com.map((comment: string) =>
+      JSON.parse(comment),
+    );
+
+    const updatedComments = parsedComment.filter(
+      (comment: TComment) => comment.id !== commentId,
+    );
+    const stringifiedComments = updatedComments.map((comment: TComment) =>
+      JSON.stringify(comment),
+    );
+
+    const newComment = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      postId,
+      {
+        com: stringifiedComments,
+      },
+    );
+
+    if (!newComment) throw Error;
+
     return newComment;
   } catch (error) {
     console.log(error);
