@@ -1,25 +1,67 @@
-import { Heart, MessageSquare, SquarePen, Trash } from "lucide-react";
+import { MessageSquare, SquarePen, Trash } from "lucide-react";
 
 import { Typography } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import { usePost } from "@/context/PostContext";
-import { useGetCurrentUser } from "@/lib/react-query/queries";
+import {
+  useGetCurrentUser,
+  useGetPostById,
+  useToggleLikeComment,
+} from "@/lib/react-query/queries";
 import { TComment } from "@/types";
+import Image from "next/image";
+import { useParams } from "next/navigation";
 import { useState } from "react";
+import like from "../../../../../../../assets/Images/Icons/like.svg";
+import liked from "../../../../../../../assets/Images/Icons/liked.svg";
 import CommentForm from "./CommentForm";
 import CommentList from "./CommentList";
 
 const Comment = ({ comment }: { comment: TComment }) => {
-  const [isReplying, setIsReplying] = useState(false);
-  const [areChildrenHidden, setAreChildrenHidden] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isReplying, setIsReplying] = useState<boolean>(false);
+  const [areChildrenHidden, setAreChildrenHidden] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const { mutateAsync: toggleLikeComment } = useToggleLikeComment();
+  const params = useParams<{ postId: string }>();
 
   const { getReplies } = usePost();
   const { data: currentUser } = useGetCurrentUser();
+  const { data: post } = useGetPostById(params.postId);
+  const { data: user } = useGetCurrentUser();
 
   const childComments = getReplies(comment?.id) || [];
-  console.log({ childComments });
-  console.log({ isReplying });
+
+  const [likes, setLikes] = useState<Array<string>>(comment.likes);
+  if (!user) {
+    return <div>loading...</div>;
+  }
+
+  function handleLike(e: React.MouseEvent<HTMLImageElement, MouseEvent>) {
+    e.stopPropagation();
+
+    if (!post || !user) {
+      return <div>loading...</div>;
+    }
+
+    let commentLikesArray = [...likes];
+
+    if (commentLikesArray.includes(user?.$id)) {
+      commentLikesArray = commentLikesArray.filter(
+        (likeId) => likeId != user?.$id,
+      );
+    } else {
+      commentLikesArray.push(user?.$id);
+    }
+
+    setLikes(commentLikesArray);
+    toggleLikeComment({
+      postId: post.$id,
+      commentId: comment.id,
+      commentLikesArray,
+      userId: user.$id,
+    });
+  }
+  const isLiked = likes?.includes(user.$id);
 
   return (
     <>
@@ -28,7 +70,7 @@ const Comment = ({ comment }: { comment: TComment }) => {
           <Typography variant={"muted"}>{comment?.user?.name}</Typography>
           <Typography variant={"muted"}>
             {/* {dateFormatter.format(createdAt)} */}
-            {/* {formatDate(createdAt)} */}
+            {/* {formatDate()} */}
           </Typography>
         </div>
 
@@ -37,7 +79,6 @@ const Comment = ({ comment }: { comment: TComment }) => {
             initialValue={comment.commentText}
             commentId={comment.id}
             action="Edit"
-            setIsReplying={setIsReplying}
             setIsEditing={setIsEditing}
           />
         ) : (
@@ -47,35 +88,42 @@ const Comment = ({ comment }: { comment: TComment }) => {
         )}
 
         <div>
-          <ul className="flex items-enter gap-4">
-            <li>
-              <Heart />
-            </li>
-            <li>
-              <MessageSquare
-                onClick={() => setIsReplying((prev) => !prev)}
-                className="cursor-pointer "
+          <div className="flex items-enter gap-4">
+            <div className="flex gap-2">
+              <Image
+                src={isLiked ? liked : like}
+                alt="like"
+                width={100}
+                height={100}
+                className="w-7 h-7 cursor-pointer"
+                onClick={(e) => handleLike(e)}
               />
-            </li>
+              <span>{likes.length}</span>
+            </div>
+            <MessageSquare
+              onClick={() => setIsReplying((prev) => !prev)}
+              className="cursor-pointer "
+            />
             {comment?.user?.id === currentUser?.$id && (
-              <>
-                <li>
-                  <SquarePen
-                    onClick={() => setIsEditing((prev) => !prev)}
-                    className="cursor-pointer"
-                  />
-                </li>
-                <li>
-                  <Trash />
-                </li>
-              </>
+              <div className="flex gap-4">
+                <SquarePen
+                  onClick={() => setIsEditing((prev) => !prev)}
+                  className="cursor-pointer"
+                />
+                <Trash />
+              </div>
             )}
-          </ul>
+          </div>
         </div>
       </div>
       {isReplying && (
         <div className="ml-3">
-          <CommentForm autoFocus commentParentId={comment.id} action="Reply" />
+          <CommentForm
+            autoFocus
+            commentParentId={comment.id}
+            action="Reply"
+            setIsReplying={setIsReplying}
+          />
         </div>
       )}
 

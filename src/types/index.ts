@@ -38,6 +38,12 @@ export type TCommentUser = {
   name: string;
   imageUrl?: string;
 };
+export type Like = {
+  commentId: string;
+  commentText: string;
+  userId: string;
+  username: string;
+};
 
 export type TComment = {
   id: string;
@@ -45,4 +51,5 @@ export type TComment = {
   // postId?: string;
   parentId?: string;
   user?: TCommentUser;
+  likes: string[];
 };
