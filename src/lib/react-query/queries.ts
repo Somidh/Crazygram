@@ -12,6 +12,7 @@ import {
   likePost,
   signInAccount,
   signOutAccount,
+  toggleLikeComment,
   updateComment,
 } from "../appwrite/api";
 
@@ -150,5 +151,21 @@ export const useUpdateComment = () => {
       commentId: string;
       updatedText: string;
     }) => updateComment(postId, commentId, updatedText),
+  });
+};
+
+export const useToggleLikeComment = () => {
+  return useMutation({
+    mutationFn: ({
+      postId,
+      commentId,
+      commentLikesArray,
+      userId,
+    }: {
+      postId: string;
+      commentId: string;
+      commentLikesArray: string[];
+      userId: string;
+    }) => toggleLikeComment(postId, commentId, commentLikesArray, userId),
   });
 };

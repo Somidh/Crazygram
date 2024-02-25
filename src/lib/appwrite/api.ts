@@ -334,3 +334,55 @@ export async function updateComment(
     console.log(error);
   }
 }
+
+export async function toggleLikeComment(
+  postId: string,
+  commentId: string,
+  commentLikesArray: string[],
+  userId: string,
+) {
+  try {
+    const post = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      postId,
+    );
+    if (!post) throw Error;
+
+    const commentIndex = post.com.findIndex((comment: string) => {
+      const parsedComment = JSON.parse(comment);
+      return parsedComment.id === commentId;
+    });
+
+    if (commentIndex === -1) throw Error;
+
+    const parsedComment = JSON.parse(post.com[commentIndex]);
+    console.log({ parsedComment });
+
+    const userLikedIndex = parsedComment.likes.indexOf(userId);
+
+    if (userLikedIndex === -1) {
+      // If the user hasn't liked the comment, add the userId to likes array
+      parsedComment.likes.push(userId);
+    } else {
+      // If the user has already liked the comment, remove the userId from likes array
+      parsedComment.likes.splice(userLikedIndex, 1);
+    }
+
+    // Update the modified comment back to the comments array
+    post.com[commentIndex] = JSON.stringify(parsedComment);
+
+    // Update the post with the modified comments array
+    await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      postId,
+      {
+        com: post.com,
+      },
+    );
+    return "Like toggled successfully";
+  } catch (error) {
+    console.log(error);
+  }
+}

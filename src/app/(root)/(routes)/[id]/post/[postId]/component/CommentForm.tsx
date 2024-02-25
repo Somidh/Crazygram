@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import { usePost } from "@/context/PostContext";
 import {
   useCreateComment,
   useGetCurrentUser,
@@ -63,10 +64,10 @@ const CommentForm = ({
   const { mutateAsync: updateComment } = useUpdateComment();
   const parsedComment = post?.com.map((comment: string) => comment);
   const [comments, setComments] = useState<string[]>(parsedComment);
+  const { createLocalComment, updateLocalComment } = usePost();
 
   function handleCommentPost(data: z.infer<typeof CommentFormValidation>) {
     if (!post || !currentUser) {
-      // Render loading indicator if post or currentUser is not available
       return (
         <div className="flex-center w-full h-full">
           <Loader />
@@ -79,7 +80,6 @@ const CommentForm = ({
     let newComment: TComment | undefined;
     switch (action) {
       case "Comment":
-        console.log("doing comment boi");
         newComment = {
           id: uuidv4(),
           commentText,
@@ -87,10 +87,12 @@ const CommentForm = ({
             id: currentUser?.$id,
             name: currentUser?.name,
           },
+          likes: [],
         };
+        createLocalComment(newComment);
         break;
       case "Reply":
-        console.log("doing reply boi");
+        if (setIsReplying) setIsReplying(false);
         newComment = {
           id: uuidv4(),
           commentText,
@@ -99,37 +101,25 @@ const CommentForm = ({
             id: currentUser?.$id,
             name: currentUser?.name,
           },
+          likes: [],
         };
+        createLocalComment(newComment);
         break;
       case "Edit":
         if (commentId) {
-          // If commentId exists, it's an edit action
           updateComment({
             postId: post.$id,
             commentId,
             updatedText: commentText,
           });
-          if (setIsEditing) setIsEditing(false);
-          // .then((response) => {
-          //   // Handle success
-          //   console.log("Comment updated successfully:", response);
-          // })
-          // .catch((error) => {
-          //   // Handle error
-          //   console.error("Error updating comment:", error);
-          //   // Display error message to the user
-          //   // You can implement a notification system or any other error handling mechanism here
-          // });
+          updateLocalComment(commentId, commentText);
         }
         break;
-
-      default:
-        return;
     }
 
+    if (setIsEditing) setIsEditing(false);
     if (setIsReplying) setIsReplying(false);
 
-    console.log({ newComment });
     const str = JSON.stringify(newComment);
 
     // Update comments state
@@ -137,25 +127,8 @@ const CommentForm = ({
 
     // Create comment
     createComment({ postId: post.$id, comments: [str, ...comments] });
-    //   .then((response) => {
-    //     // Handle success
-    //     console.log("Comment created successfully:", response);
-    //   })
-    //   .catch((error) => {
-    //     // Handle error
-    //     console.error("Error creating comment:", error);
-    //     // Rollback changes if necessary
-    //     setComments((prevComments) =>
-    //       prevComments.filter((comment) => comment !== str),
-    //     );
-    //     // Display error message to the user
-    //     // You can implement a notification system or any other error handling mechanism here
-    //   });
-
-    // Reset form
     form.reset();
   }
-  console.log({ comments });
 
   return (
     <Form {...form}>
@@ -186,7 +159,6 @@ const CommentForm = ({
             </FormItem>
           )}
         />
-        {/* <Button type="submit">{loading ? <Loader /> : "Post"}</Button> */}
         <Button type="submit">Comment</Button>
       </form>
     </Form>

@@ -1,33 +1,34 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 import { Typography } from "@/components/typography";
 import { useGetPostById } from "@/lib/react-query/queries";
+import { TComment } from "@/types";
 import { useParams } from "next/navigation";
 
-type GroupType = {
-  [parentId: string]: Comment[];
-};
-type User = {
-  id: string | undefined;
-  name: string | undefined;
-};
+// type User = {
+//   id: string;
+//   name: string;
+// };
 
 type INITIAL_STATE_Type = {
   post: {
     post: any;
     postId: string;
   };
-  getReplies: (parentId: string) => Comment[] | undefined;
-  rootComments: Comment[] | undefined;
+  getReplies: (parentId: string) => TComment[] | undefined;
+  rootComments: TComment[] | undefined;
+  createLocalComment: (comment: TComment) => void;
+  updateLocalComment: (commentId: string, commentText: string) => void;
 };
-type Comment = {
-  id: string;
-  commentText: string;
-  parentId: string;
-  user: User;
-};
+// type Comment = {
+//   id: string;
+//   commentText: string;
+//   parentId: string;
+//   user: User;
+//   likes: string[];
+// };
 
 const INITIAL_STATE: INITIAL_STATE_Type = {
   post: {
@@ -36,6 +37,8 @@ const INITIAL_STATE: INITIAL_STATE_Type = {
   },
   getReplies: () => undefined,
   rootComments: undefined,
+  createLocalComment: () => {},
+  updateLocalComment: () => {},
 };
 const Context = createContext(INITIAL_STATE);
 
@@ -52,29 +55,68 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
     error,
     isPending,
   } = useGetPostById(params.postId);
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<TComment[]>([]);
   const parsedComment = post?.com.map((post: string) => JSON.parse(post));
 
+  console.log({ parsedComment });
+
+  // const commentByParentId = useMemo(() => {
+  //   const group: any = {};
+  //   comments?.forEach((comment: TComment) => {
+  //     group[comment.parentId] ||= [];
+  //     group[comment.parentId].push(comment);
+  //   });
+
+  //   return group;
+  // }, [comments]);
   const commentByParentId = useMemo(() => {
-    const group: any = {};
-    parsedComment?.forEach((comment: Comment) => {
-      group[comment.parentId] ||= [];
-      group[comment.parentId].push(comment);
+    const group: Record<string, TComment[]> = {};
+    comments?.forEach((comment: TComment) => {
+      const parentId = comment.parentId ?? "undefined"; // Nullish coalescing operator to handle undefined
+      group[parentId] ||= [];
+      group[parentId].push(comment);
     });
 
     return group;
+  }, [comments]);
+
+  console.log({ comments });
+  console.log({ parsedComment });
+
+  useEffect(() => {
+    if (post?.com == null) return;
+    setComments(parsedComment);
   }, [post?.com]);
-  console.log({ commentByParentId });
 
-  // useEffect(() => {
-  //   if (post?.com == null) return;
-  //   setComments(parsedComment);
-  // }, [parsedComment]);
-
-  function getReplies(parentId: string) {
-    return commentByParentId[parentId];
+  function getReplies(parentId: string): TComment[] | undefined {
+    const replies = commentByParentId[parentId];
+    if (replies) {
+      // Assuming TComment can be directly cast to Comment
+      return replies as TComment[];
+    }
+    return undefined;
+  }
+  function createLocalComment(comment: TComment) {
+    setComments((prevComments: TComment[]) => {
+      return [comment, ...prevComments];
+    });
   }
 
+  function updateLocalComment(commentId: string, newText: string) {
+    setComments((prevComments: TComment[]) => {
+      return prevComments.map((comment: TComment) => {
+        // If the comment ID matches the specified comment ID, update its text
+        if (comment.id === commentId) {
+          return {
+            ...comment, // Keep all existing properties of the comment
+            commentText: newText, // Update the commentText property
+          };
+        }
+        // For other comments, return them unchanged
+        return comment;
+      });
+    });
+  }
   function getUndefinedReplies(commentByParentId: Record<string, any>) {
     // Get all keys of commentByParentId
     const keys = Object.keys(commentByParentId);
@@ -91,12 +133,15 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   const undefinedReplies = getUndefinedReplies(commentByParentId);
+  console.log({ undefinedReplies });
   return (
     <Context.Provider
       value={{
         post: { post, postId: params.postId },
         getReplies,
         rootComments: undefinedReplies,
+        createLocalComment,
+        updateLocalComment,
       }}
     >
       {isLoading ? (
