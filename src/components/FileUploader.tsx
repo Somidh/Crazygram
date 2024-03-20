@@ -20,7 +20,6 @@ const FileUploader = ({ fieldChange, url }: FileUploaderProps) => {
       setFile(acceptedFiles);
       setFileUrl(convertFileToUrl(acceptedFiles[0]));
       fieldChange(acceptedFiles);
-      console.log({ acceptedFiles });
     },
     [file],
   );

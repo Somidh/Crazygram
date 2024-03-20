@@ -50,7 +50,6 @@ export const CreatePostForm = ({ post, action }: CreatePostFormProps) => {
       ...values,
       userId: user.id,
     });
-    console.log(newPost);
 
     if (!newPost) {
       router.replace("/");

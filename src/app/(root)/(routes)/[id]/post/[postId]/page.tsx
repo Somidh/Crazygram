@@ -15,7 +15,6 @@ const PostDetailsPage = ({
   const { data: post } = useGetPostById(params.postId);
   const { data: currentUser } = useGetCurrentUser();
   const { rootComments } = usePost();
-  console.log({ rootComments });
   const flattenedComments = rootComments?.flatMap((innerArray) => innerArray);
 
   if (!post || !currentUser)

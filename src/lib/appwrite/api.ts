@@ -14,7 +14,6 @@ export async function createUserAccount(user: TNewUser) {
     if (!newAccount) throw Error;
 
     const avatarUrl = avatars.getInitials(user.name);
-    console.log({ newAccount });
     const newUser = await saveUserToDb({
       accountId: newAccount.$id,
       email: newAccount.email,
@@ -22,8 +21,6 @@ export async function createUserAccount(user: TNewUser) {
       imageUrl: avatarUrl,
       username: user.username,
     });
-
-    console.log("At api", newUser);
 
     return newUser;
   } catch (error) {
@@ -40,7 +37,6 @@ export async function saveUserToDb(user: {
   username?: string;
 }) {
   try {
-    console.log("At api in saveusertoDb", user);
     const newUser = await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
@@ -69,7 +65,6 @@ export async function signInAccount(user: { email: string; password: string }) {
 export async function signOutAccount() {
   try {
     const session = await account.deleteSession("current");
-    console.log("Signing out");
     return session;
   } catch (error) {
     console.log(error);
@@ -87,7 +82,6 @@ export async function getCurrentUser() {
       appwriteConfig.userCollectionId,
       [Query.equal("accountId", currentAccount.$id)],
     );
-    console.log({ currentUser });
 
     if (!currentUser) throw Error;
 
@@ -285,8 +279,6 @@ export async function createComment(postId: string, comments: string[]) {
       },
     );
 
-    console.log({ newComment });
-
     if (!newComment) throw Error;
 
     return newComment;
@@ -327,7 +319,6 @@ export async function updateComment(
       },
     );
 
-    console.log("UpdatedComment:", newComment);
     if (!newComment) throw Error;
     return newComment;
   } catch (error) {
@@ -396,7 +387,6 @@ export async function toggleLikeComment(
     if (commentIndex === -1) throw Error;
 
     const parsedComment = JSON.parse(post.com[commentIndex]);
-    console.log({ parsedComment });
 
     const userLikedIndex = parsedComment.likes.indexOf(userId);
 
