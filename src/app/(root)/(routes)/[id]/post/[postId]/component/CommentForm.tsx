@@ -60,13 +60,16 @@ const CommentForm = ({
   const [comment, setComment] = useState(initialValue);
   const { data: post } = useGetPostById(params.postId);
   const { data: currentUser } = useGetCurrentUser();
-  const { mutateAsync: createComment } = useCreateComment();
+  const { mutateAsync: createComment, isPending: isCreatingComment } =
+    useCreateComment();
   const { mutateAsync: updateComment } = useUpdateComment();
   const parsedComment = post?.com.map((comment: string) => comment);
   const [comments, setComments] = useState<string[]>(parsedComment);
   const { createLocalComment, updateLocalComment } = usePost();
 
-  function handleCommentPost(data: z.infer<typeof CommentFormValidation>) {
+  async function handleCommentPost(
+    data: z.infer<typeof CommentFormValidation>,
+  ) {
     if (!post || !currentUser) {
       return (
         <div className="flex-center w-full h-full">
@@ -89,7 +92,6 @@ const CommentForm = ({
           },
           likes: [],
         };
-        createLocalComment(newComment);
         break;
       case "Reply":
         if (setIsReplying) setIsReplying(false);
@@ -103,7 +105,6 @@ const CommentForm = ({
           },
           likes: [],
         };
-        createLocalComment(newComment);
         break;
       case "Edit":
         if (commentId) {
@@ -122,11 +123,19 @@ const CommentForm = ({
 
     const str = JSON.stringify(newComment);
 
+    // Create comment
+    await createComment({ postId: post.$id, comments: [str, ...comments] });
+    if (newComment) {
+      createLocalComment({
+        commentText: newComment?.commentText,
+        id: newComment?.id,
+        likes: newComment.likes,
+        parentId: newComment.parentId,
+        user: newComment.user,
+      });
+    }
     // Update comments state
     setComments((prevComments) => [str, ...prevComments]);
-
-    // Create comment
-    createComment({ postId: post.$id, comments: [str, ...comments] });
     form.reset();
   }
 
@@ -141,7 +150,9 @@ const CommentForm = ({
           name="commentText"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Add a comment</FormLabel>
+              <FormLabel>
+                {action === "Edit" ? "Update your comment" : "Add you comment"}
+              </FormLabel>
               <FormControl>
                 <Textarea
                   autoFocus={autoFocus}
@@ -159,7 +170,9 @@ const CommentForm = ({
             </FormItem>
           )}
         />
-        <Button type="submit">Comment</Button>
+        <Button type="submit" disabled={isCreatingComment}>
+          {isCreatingComment ? "Posting" : "Comment"}
+        </Button>
       </form>
     </Form>
   );
