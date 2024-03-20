@@ -7,12 +7,7 @@ import { useGetPostById } from "@/lib/react-query/queries";
 import { TComment } from "@/types";
 import { useParams } from "next/navigation";
 
-// type User = {
-//   id: string;
-//   name: string;
-// };
-
-type INITIAL_STATE_Type = {
+type INITIAL_STATE_TYPE = {
   post: {
     post: any;
     postId: string;
@@ -23,15 +18,7 @@ type INITIAL_STATE_Type = {
   updateLocalComment: (commentId: string, commentText: string) => void;
   deleteLocalComment: (commentId: string) => void;
 };
-// type Comment = {
-//   id: string;
-//   commentText: string;
-//   parentId: string;
-//   user: User;
-//   likes: string[];
-// };
-
-const INITIAL_STATE: INITIAL_STATE_Type = {
+const INITIAL_STATE: INITIAL_STATE_TYPE = {
   post: {
     post: "",
     postId: "",
@@ -60,7 +47,7 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
   const [comments, setComments] = useState<TComment[]>([]);
   const parsedComment = post?.com.map((post: string) => JSON.parse(post));
 
-  console.log({ parsedComment });
+  console.log("comment on context:", parsedComment);
 
   // const commentByParentId = useMemo(() => {
   //   const group: any = {};
@@ -72,6 +59,7 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
   //   return group;
   // }, [comments]);
   const commentByParentId = useMemo(() => {
+    console.log("parentId:", comments);
     const group: Record<string, TComment[]> = {};
     comments?.forEach((comment: TComment) => {
       const parentId = comment.parentId ?? "undefined"; // Nullish coalescing operator to handle undefined
@@ -82,9 +70,6 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
     return group;
   }, [comments]);
 
-  console.log({ comments });
-  console.log({ parsedComment });
-
   useEffect(() => {
     if (post?.com == null) return;
     setComments(parsedComment);
@@ -92,11 +77,12 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
 
   function getReplies(parentId: string): TComment[] | undefined {
     const replies = commentByParentId[parentId];
-    if (replies) {
-      // Assuming TComment can be directly cast to Comment
-      return replies as TComment[];
-    }
-    return undefined;
+    console.log({ replies });
+    // if (replies) {
+    // Assuming TComment can be directly cast to Comment
+    return replies as TComment[];
+    // }
+    // return undefined;
   }
   function createLocalComment(comment: TComment) {
     setComments((prevComments: TComment[]) => {
@@ -107,15 +93,15 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
   function updateLocalComment(commentId: string, newText: string) {
     setComments((prevComments: TComment[]) => {
       return prevComments.map((comment: TComment) => {
-        // If the comment ID matches the specified comment ID, update its text
         if (comment.id === commentId) {
           return {
-            ...comment, // Keep all existing properties of the comment
-            commentText: newText, // Update the commentText property
+            ...comment,
+            commentText: newText,
           };
+        } else {
+          // For other comments, return them unchanged
+          return comment;
         }
-        // For other comments, return them unchanged
-        return comment;
       });
     });
   }
@@ -142,8 +128,9 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
+  function toggleLocalCommentLike(id: string, addLike: boolean) {}
+
   const undefinedReplies = getUndefinedReplies(commentByParentId);
-  console.log({ undefinedReplies });
   return (
     <Context.Provider
       value={{

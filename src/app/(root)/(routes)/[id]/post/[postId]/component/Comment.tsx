@@ -23,7 +23,11 @@ const Comment = ({ comment }: { comment: TComment }) => {
   const [areChildrenHidden, setAreChildrenHidden] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const { mutateAsync: toggleLikeComment } = useToggleLikeComment();
-  const { mutateAsync: deleteComment, isSuccess } = useDeleteComment();
+  const {
+    mutateAsync: deleteComment,
+    isSuccess,
+    isPending: isDeleting,
+  } = useDeleteComment();
   const params = useParams<{ postId: string }>();
   const { deleteLocalComment } = usePost();
 
@@ -33,6 +37,8 @@ const Comment = ({ comment }: { comment: TComment }) => {
   const { data: user } = useGetCurrentUser();
 
   const childComments = getReplies(comment?.id) || [];
+
+  console.log({ childComments });
 
   const [likes, setLikes] = useState<Array<string>>(comment.likes);
   if (!user) {
@@ -68,11 +74,11 @@ const Comment = ({ comment }: { comment: TComment }) => {
     });
   }
 
-  function handleDeleteComment() {
+  async function handleDeleteComment() {
     if (!post) {
       return <div>loading...</div>;
     }
-    deleteComment({ postId: post.$id, commentId: comment.id });
+    await deleteComment({ postId: post.$id, commentId: comment.id });
     deleteLocalComment(comment.id);
   }
   const isLiked = likes?.includes(user.$id);
@@ -102,32 +108,41 @@ const Comment = ({ comment }: { comment: TComment }) => {
         )}
 
         <div>
-          <div className="flex items-enter gap-4">
-            <div className="flex gap-2">
-              <Image
-                src={isLiked ? liked : like}
-                alt="like"
-                width={100}
-                height={100}
-                className="w-7 h-7 cursor-pointer"
-                onClick={(e) => handleLike(e)}
-              />
+          <div className="flex items-enter">
+            <div className="flex flex-col items-center">
+              <Button variant={"ghost"}>
+                <Image
+                  src={isLiked ? liked : like}
+                  alt="like"
+                  width={100}
+                  height={100}
+                  className="w-7 h-7 cursor-pointer"
+                  onClick={(e) => handleLike(e)}
+                />
+              </Button>
               <span>{likes.length}</span>
             </div>
-            <MessageSquare
-              onClick={() => setIsReplying((prev) => !prev)}
-              className="cursor-pointer "
-            />
+            <Button variant={"ghost"}>
+              <MessageSquare
+                onClick={() => setIsReplying((prev) => !prev)}
+                className="cursor-pointer "
+              />
+            </Button>
             {comment?.user?.id === currentUser?.$id && (
-              <div className="flex gap-4">
-                <SquarePen
-                  onClick={() => setIsEditing((prev) => !prev)}
-                  className="cursor-pointer"
-                />
-                <Trash
-                  onClick={handleDeleteComment}
-                  className="cursor-pointer"
-                />
+              <div className="">
+                <Button variant={"ghost"}>
+                  <SquarePen
+                    onClick={() => setIsEditing((prev) => !prev)}
+                    className="cursor-pointer"
+                  />
+                </Button>
+                {/* <Button variant={"ghost"} disabled={isDeleting}> */}
+                <Button variant={"ghost"}>
+                  <Trash
+                    onClick={handleDeleteComment}
+                    className="cursor-pointer"
+                  />
+                </Button>
               </div>
             )}
           </div>

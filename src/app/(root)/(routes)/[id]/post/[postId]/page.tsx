@@ -15,6 +15,7 @@ const PostDetailsPage = ({
   const { data: post } = useGetPostById(params.postId);
   const { data: currentUser } = useGetCurrentUser();
   const { rootComments } = usePost();
+  console.log({ rootComments });
   const flattenedComments = rootComments?.flatMap((innerArray) => innerArray);
 
   if (!post || !currentUser)
@@ -31,7 +32,11 @@ const PostDetailsPage = ({
         <CommentForm action="Comment" />
       </div>
       <div className="mt-5">
-        <CommentList post={post} comments={flattenedComments} />
+        <CommentList
+          post={post}
+          // comments={rootComments?.flatMap((comment) => comment)}
+          comments={flattenedComments}
+        />
       </div>
     </div>
   );

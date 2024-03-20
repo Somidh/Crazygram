@@ -8,6 +8,7 @@ type CommentsListProps = {
 };
 
 const CommentList = ({ comments }: CommentsListProps) => {
+  console.log({ comments });
   return comments?.map((comment: TComment, idx: number) => {
     return (
       <div key={idx} className="mb-4 space-y-2">
