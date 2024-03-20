@@ -1,10 +1,10 @@
 "use client";
 
+import sideImage from "@/assets/Images/side-img(1).svg";
+import { useUserContext } from "@/context/AuthContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
-import sideImage from "@/assets/Images/side-img(1).svg";
-import { useUserContext } from "@/context/AuthContext";
 
 export default function AuthLayout({
   children,
@@ -13,8 +13,6 @@ export default function AuthLayout({
 }) {
   const { isAuthenticated } = useUserContext();
   const router = useRouter();
-
-  console.log({ isAuthenticated });
 
   return (
     <>

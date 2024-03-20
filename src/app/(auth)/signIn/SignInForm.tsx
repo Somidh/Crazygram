@@ -14,18 +14,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { Input } from "@/components/ui/input";
 import { Typography } from "@/components/typography";
-import Link from "next/link";
-import { SignInValidations } from "@/lib/validations";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { useRouter } from "next/navigation";
-import {
-  useCreateUserAccount,
-  useSignInAccount,
-} from "@/lib/react-query/queries";
 import { useUserContext } from "@/context/AuthContext";
+import { useSignInAccount } from "@/lib/react-query/queries";
+import { SignInValidations } from "@/lib/validations";
 import { Loader } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const SignInForm = () => {
   const { mutateAsync: signInAccount, isPending: isLoggingIn } =
@@ -50,7 +47,6 @@ const SignInForm = () => {
     });
 
     if (!session) {
-      console.log("hello");
       return toast({ title: "Log in failed. Please try again." });
     }
 

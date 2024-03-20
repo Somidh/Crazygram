@@ -11,7 +11,6 @@ const Posts = ({ id }: PostsProps) => {
 
   if (!id) return;
   if (!user) return;
-  //   console.log("helo", user);
   if (!user)
     return (
       <div className="flex-center w-full h-full">
