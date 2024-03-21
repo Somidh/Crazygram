@@ -33,7 +33,7 @@ const sideBarLinks = [
 
 const Sidebar = () => {
   return (
-    <div className="hidden md:block fixed left-0 top-0 pl-4 pr-28 py-8 h-screen bg-black border-r border-gray-800">
+    <div className="hidden md:block fixed left-0 top-0 pl-4 pr-48 py-8 h-screen bg-black border-r border-gray-800">
       <Logo />
       <ul className="flex flex-col items-start gap-12 mt-16 ">
         {sideBarLinks.map((link, idx) => (

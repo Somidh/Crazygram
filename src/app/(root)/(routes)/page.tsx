@@ -7,10 +7,13 @@ import { Models } from "appwrite";
 const HomePage = () => {
   const { data: posts } = useGetAllPosts();
   return (
-    <div>
+    <div className="last:mb-20">
       {posts?.documents.map((post: Models.Document) => {
         return (
-          <div key={post.$id} className="mb-10  border border-gray-800 p-2">
+          <div
+            key={post.$id}
+            className="mb-10  border border-gray-800 p-2  md:border-none md:p-0 "
+          >
             <PostCard post={post} />
           </div>
         );

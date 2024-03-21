@@ -66,7 +66,7 @@ export const CreatePostForm = ({ post, action }: CreatePostFormProps) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleCreatePost)}
-        className="space-y-8 w-full "
+        className="space-y-8 w-full mb-20"
       >
         <FormField
           control={form.control}

@@ -3,7 +3,7 @@ import { CreatePostForm } from "./components/createPostForm";
 
 const Create = () => {
   return (
-    <div>
+    <div className="max-w-5xl mx-auto">
       <Typography variant={"h3"} className="mb-10">
         Create a Post
       </Typography>
