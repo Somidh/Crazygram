@@ -28,15 +28,17 @@ const PostDetailsPage = ({
   return (
     <div>
       <PostCard post={post} />
-      <div className="mt-10">
-        <CommentForm action="Comment" />
-      </div>
-      <div className="mt-5">
-        <CommentList
-          post={post}
-          // comments={rootComments?.flatMap((comment) => comment)}
-          comments={flattenedComments}
-        />
+      <div className="max-w-lg mx-auto">
+        <div className="mt-10">
+          <CommentForm action="Comment" />
+        </div>
+        <div className="mt-5">
+          <CommentList
+            post={post}
+            // comments={rootComments?.flatMap((comment) => comment)}
+            comments={flattenedComments}
+          />
+        </div>
       </div>
     </div>
   );

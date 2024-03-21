@@ -56,7 +56,7 @@ export const PostCard = ({ post }: PostCardProp) => {
   const isFollowing = following?.includes(post.creator.$id);
 
   return (
-    <div className="w-full ">
+    <div className="w-full max-w-md mx-auto ">
       {/* POST HEADER */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
@@ -85,7 +85,7 @@ export const PostCard = ({ post }: PostCardProp) => {
 
       {/* POST IMAGE */}
       <Link href={`${user.id}/post/${post.$id}`}>
-        <div className="w-full h-96 mb-2 ">
+        <div className="w-full h-[32rem] mb-2 ">
           <Image
             src={post.imageUrl}
             alt="post-image"
