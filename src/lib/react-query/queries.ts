@@ -5,12 +5,14 @@ import {
   createPost,
   createUserAccount,
   deleteComment,
+  deleteSavedPost,
   followUser,
   getAllPosts,
   getCurrentUser,
   getPostById,
   getUserById,
   likePost,
+  savePost,
   signInAccount,
   signOutAccount,
   toggleLikeComment,
@@ -70,6 +72,41 @@ export const useLikePost = () => {
       queryClient.invalidateQueries({
         queryKey: ["GET_POST_BY_ID", data?.$id],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["GET_RECENT_POSTS"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["GET_POSTS"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["GET_CURRENT_USER"],
+      });
+    },
+  });
+};
+export const useSavePost = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ postId, userId }: { postId: string; userId: string }) =>
+      savePost(postId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["GET_RECENT_POSTS"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["GET_POSTS"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["GET_CURRENT_USER"],
+      });
+    },
+  });
+};
+export const useDeleteSavedPost = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (savedId: string) => deleteSavedPost(savedId),
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["GET_RECENT_POSTS"],
       });

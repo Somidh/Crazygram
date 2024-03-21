@@ -11,14 +11,12 @@ const Posts = ({ id }: PostsProps) => {
 
   if (!id) return;
   if (!user) return;
-  //   console.log("helo", user);
   if (!user)
     return (
       <div className="flex-center w-full h-full">
         <Loader />
       </div>
     );
-  console.log("Post", user.posts);
 
   return (
     <div className="w-full grid grid-cols-3 gap-1 max-w-5xl">
