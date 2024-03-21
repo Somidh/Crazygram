@@ -10,7 +10,7 @@ const Username = ({ params }: { params: { id: string } }) => {
   if (!user) return;
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 max-w-xl mx-auto">
       <UserProfileHeader user={user} />
       <Content id={params.id} />
     </div>

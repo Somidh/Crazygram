@@ -7,7 +7,7 @@ import { Models } from "appwrite";
 const HomePage = () => {
   const { data: posts } = useGetAllPosts();
   return (
-    <div className="last:mb-20">
+    <div className="last:mb-20 max-w-md mx-auto">
       {posts?.documents.map((post: Models.Document) => {
         return (
           <div

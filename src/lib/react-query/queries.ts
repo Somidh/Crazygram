@@ -1,5 +1,10 @@
 import { TNewPost, TNewUser, TUpdatePost } from "@/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   createComment,
   createPost,
@@ -10,10 +15,12 @@ import {
   followUser,
   getAllPosts,
   getCurrentUser,
+  getInfinitePosts,
   getPostById,
   getUserById,
   likePost,
   savePost,
+  searchPosts,
   signInAccount,
   signOutAccount,
   toggleLikeComment,
@@ -147,6 +154,28 @@ export const useDeleteSavedPost = () => {
   });
 };
 
+export const useGetPosts = () => {
+  return useInfiniteQuery({
+    queryKey: ["GET_INFINITE_POSTS"],
+    queryFn: getInfinitePosts as any,
+    getNextPageParam: (lastPage: any) => {
+      if (lastPage && lastPage.documents.length === 0) return null;
+
+      const lastId = lastPage?.documents[lastPage?.documents.length - 1].$id;
+
+      return lastId;
+    },
+    initialPageParam: {},
+  });
+};
+
+export const useSearchPosts = (searchValue: string) => {
+  return useQuery({
+    queryKey: ["SEARCH_POSTS"],
+    queryFn: () => searchPosts(searchValue),
+    enabled: !!searchValue,
+  });
+};
 export const useFollowUser = () => {
   const queryClient = useQueryClient();
 

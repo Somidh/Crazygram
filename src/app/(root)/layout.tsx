@@ -11,7 +11,7 @@ export default function SetupLayout({ children }: SetupLayoutProp) {
     <div>
       <Navbar />
       <Sidebar />
-      <div className="px-4 max-w-md mx-auto">{children}</div>
+      <div className="px-4">{children}</div>
       <Bottombar />
     </div>
   );

@@ -42,8 +42,8 @@ const FileUploader = ({ fieldChange, url }: FileUploaderProps) => {
             <Image
               src={fileUrl}
               alt="image"
-              width={150}
-              height={150}
+              width={500}
+              height={500}
               className="w-full object-cover"
             />
           </div>
@@ -54,7 +54,12 @@ const FileUploader = ({ fieldChange, url }: FileUploaderProps) => {
       ) : (
         <>
           <div>
-            <Image src={MediaImage} alt="media-image" />
+            <Image
+              src={MediaImage}
+              alt="media-image"
+              width={500}
+              height={500}
+            />
           </div>
           <Typography variant={"paragraph"} className="text-center">
             Drag and drop some files here,
