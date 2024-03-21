@@ -1,10 +1,11 @@
-import { TNewPost, TNewUser } from "@/types";
+import { TNewPost, TNewUser, TUpdatePost } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createComment,
   createPost,
   createUserAccount,
   deleteComment,
+  deletePost,
   deleteSavedPost,
   followUser,
   getAllPosts,
@@ -17,6 +18,7 @@ import {
   signOutAccount,
   toggleLikeComment,
   updateComment,
+  updatePost,
 } from "../appwrite/api";
 
 export const useCreateUserAccount = () => {
@@ -43,6 +45,31 @@ export const useCreatePost = () => {
 
   return useMutation({
     mutationFn: (post: TNewPost) => createPost(post),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["GET_RECENT_POSTS"],
+      });
+    },
+  });
+};
+export const useUpdatePost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (post: TUpdatePost) => updatePost(post),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["GET_POST_BY_ID", data?.$id],
+      });
+    },
+  });
+};
+export const useDeletePost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ postId, imageId }: { postId: string; imageId: string }) =>
+      deletePost(postId, imageId),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["GET_RECENT_POSTS"],
