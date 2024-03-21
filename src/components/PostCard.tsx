@@ -1,12 +1,18 @@
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useUserContext } from "@/context/AuthContext";
 import { useFollowUser } from "@/lib/react-query/queries";
 import { Models } from "appwrite";
+import { SquarePen } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import ellipsis from "../assets/Images/Icons/ellipsis-vertical.svg";
 import PostStats from "./PostStats";
 import { Typography } from "./typography";
-import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
 
 type PostCardProp = {
@@ -56,7 +62,7 @@ export const PostCard = ({ post }: PostCardProp) => {
   const isFollowing = following?.includes(post.creator.$id);
 
   return (
-    <div className="w-full max-w-md mx-auto ">
+    <div className="w-full  ">
       {/* POST HEADER */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
@@ -76,11 +82,26 @@ export const PostCard = ({ post }: PostCardProp) => {
         </div>
         {/* ------------------TODO------------------- */}
         {/* REMOVE FOLLOW BUTTON FROM HERE */}
-        {user.id !== post.creator.$id && (
+        {/* {user.id !== post.creator.$id && (
           <Button variant={"default"} onClick={(e) => handleFollow(e)}>
             {isFollowing ? "Unfollow" : "Follow"}
           </Button>
-        )}
+        )} */}
+        <Popover>
+          <PopoverTrigger>
+            <Image src={ellipsis} width={20} height={20} alt="options" />
+          </PopoverTrigger>
+          <PopoverContent>
+            {user.id === post.creator.$id && (
+              <Link href={`/update-post/${post.$id}`}>
+                <div className="flex items-center gap-2">
+                  <SquarePen />
+                  <Typography variant={"muted"}>Edit</Typography>
+                </div>
+              </Link>
+            )}
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* POST IMAGE */}

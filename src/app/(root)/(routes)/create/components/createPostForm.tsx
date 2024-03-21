@@ -17,7 +17,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useUserContext } from "@/context/AuthContext";
-import { useCreatePost } from "@/lib/react-query/queries";
+import {
+  useCreatePost,
+  useDeletePost,
+  useUpdatePost,
+} from "@/lib/react-query/queries";
 import { PostValidation } from "@/lib/validations";
 import { Models } from "appwrite";
 import { Loader } from "lucide-react";
@@ -31,20 +35,43 @@ export const CreatePostForm = ({ post, action }: CreatePostFormProps) => {
   const form = useForm<z.infer<typeof PostValidation>>({
     resolver: zodResolver(PostValidation),
     defaultValues: {
-      caption: "",
+      caption: post ? post?.caption : "",
       file: [],
-      location: "",
-      altText: "",
+      location: post ? post?.location : "",
+      altText: post ? post?.altText : "",
     },
   });
 
+  console.log({ post });
+
   const { mutateAsync: createPost, isPending: isCreatingPost } =
     useCreatePost();
+  const { mutateAsync: updatePost, isPending: isUpdatingPost } =
+    useUpdatePost();
+  const { mutateAsync: deletePost, isPending: isDeletingPost } =
+    useDeletePost();
   const { user } = useUserContext();
   const { toast } = useToast();
   const router = useRouter();
 
   const handleCreatePost = async (values: z.infer<typeof PostValidation>) => {
+    // UPDATE POST
+
+    if (post && action === "Update") {
+      const updatedPost = await updatePost({
+        ...values,
+        postId: post?.$id,
+        imageId: post?.imageId,
+        imageUrl: post?.imageUrl,
+      });
+
+      if (!updatedPost) {
+        toast({ title: "Updating post failed" });
+      }
+
+      return router.push(`/${user.id}/post/${post?.$id}`);
+    }
+
     // CREATE POST
     const newPost = await createPost({
       ...values,
@@ -96,6 +123,7 @@ export const CreatePostForm = ({ post, action }: CreatePostFormProps) => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="location"
@@ -122,7 +150,9 @@ export const CreatePostForm = ({ post, action }: CreatePostFormProps) => {
             </FormItem>
           )}
         />
-        <Button type="submit">{isCreatingPost ? <Loader /> : "Submit"}</Button>
+        <Button type="submit" disabled={isUpdatingPost || isCreatingPost}>
+          {isUpdatingPost || isCreatingPost ? <Loader /> : action}
+        </Button>
       </form>
     </Form>
   );

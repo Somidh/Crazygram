@@ -32,6 +32,15 @@ export type TNewPost = {
   location: string;
   altText: string;
 };
+export type TUpdatePost = {
+  postId: string;
+  caption: string;
+  imageId: string;
+  imageUrl: URL;
+  file: File[];
+  location: string;
+  altText: string;
+};
 
 export type TCommentUser = {
   id: string;
