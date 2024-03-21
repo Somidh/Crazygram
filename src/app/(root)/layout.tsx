@@ -12,9 +12,7 @@ export default function SetupLayout({ children }: SetupLayoutProp) {
       <Navbar />
       <Sidebar />
       <div className="px-4">{children}</div>
-      <div>
-        <Bottombar />
-      </div>
+      <Bottombar />
     </div>
   );
 }

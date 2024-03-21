@@ -47,8 +47,6 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
   const [comments, setComments] = useState<TComment[]>([]);
   const parsedComment = post?.com.map((post: string) => JSON.parse(post));
 
-  console.log("comment on context:", parsedComment);
-
   // const commentByParentId = useMemo(() => {
   //   const group: any = {};
   //   comments?.forEach((comment: TComment) => {
@@ -59,7 +57,6 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
   //   return group;
   // }, [comments]);
   const commentByParentId = useMemo(() => {
-    console.log("parentId:", comments);
     const group: Record<string, TComment[]> = {};
     comments?.forEach((comment: TComment) => {
       const parentId = comment.parentId ?? "undefined"; // Nullish coalescing operator to handle undefined
@@ -77,7 +74,6 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
 
   function getReplies(parentId: string): TComment[] | undefined {
     const replies = commentByParentId[parentId];
-    console.log({ replies });
     // if (replies) {
     // Assuming TComment can be directly cast to Comment
     return replies as TComment[];

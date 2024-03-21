@@ -14,7 +14,6 @@ export async function createUserAccount(user: TNewUser) {
     if (!newAccount) throw Error;
 
     const avatarUrl = avatars.getInitials(user.name);
-    console.log({ newAccount });
     const newUser = await saveUserToDb({
       accountId: newAccount.$id,
       email: newAccount.email,
@@ -22,8 +21,6 @@ export async function createUserAccount(user: TNewUser) {
       imageUrl: avatarUrl,
       username: user.username,
     });
-
-    console.log("At api", newUser);
 
     return newUser;
   } catch (error) {
@@ -40,7 +37,6 @@ export async function saveUserToDb(user: {
   username?: string;
 }) {
   try {
-    console.log("At api in saveusertoDb", user);
     const newUser = await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
@@ -87,7 +83,6 @@ export async function getCurrentUser() {
       appwriteConfig.userCollectionId,
       [Query.equal("accountId", currentAccount.$id)],
     );
-    console.log({ currentUser });
 
     if (!currentUser) throw Error;
 
@@ -213,6 +208,41 @@ export async function likePost(postId: string, likesArray: string[]) {
   }
 }
 
+export async function savePost(postId: string, userId: string) {
+  try {
+    const updateSave = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.savesCollectionId,
+      ID.unique(),
+      {
+        user: userId,
+        post: postId,
+      },
+    );
+
+    if (!updateSave) throw Error;
+
+    return updateSave;
+  } catch (error) {
+    console.log(error);
+  }
+}
+export async function deleteSavedPost(savedId: string) {
+  try {
+    const status = await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.savesCollectionId,
+      savedId,
+    );
+
+    if (!status) throw Error;
+
+    return { status: "OK" };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function followUser(
   userId: string,
   followerId: string,
@@ -285,8 +315,6 @@ export async function createComment(postId: string, comments: string[]) {
       },
     );
 
-    console.log({ newComment });
-
     if (!newComment) throw Error;
 
     return newComment;
@@ -327,7 +355,6 @@ export async function updateComment(
       },
     );
 
-    console.log("UpdatedComment:", newComment);
     if (!newComment) throw Error;
     return newComment;
   } catch (error) {
@@ -345,7 +372,6 @@ export async function deleteComment(postId: string, commentId: string) {
 
     if (!post) throw Error;
 
-    console.log({ post });
     const parsedComment = post.com.map((comment: string) =>
       JSON.parse(comment),
     );
@@ -396,7 +422,6 @@ export async function toggleLikeComment(
     if (commentIndex === -1) throw Error;
 
     const parsedComment = JSON.parse(post.com[commentIndex]);
-    console.log({ parsedComment });
 
     const userLikedIndex = parsedComment.likes.indexOf(userId);
 

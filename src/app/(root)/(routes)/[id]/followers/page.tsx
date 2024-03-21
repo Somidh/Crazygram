@@ -24,8 +24,6 @@ const Followers = ({ params }: { params: { id: string } }) => {
       </Typography>
       <section>
         {users?.followers.map((user: any) => {
-          console.log(user?.imageUrl);
-
           return (
             <div
               key={user.$id}

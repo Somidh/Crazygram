@@ -1,9 +1,14 @@
-import { useLikePost } from "@/lib/react-query/queries";
+import {
+  useDeleteSavedPost,
+  useGetCurrentUser,
+  useLikePost,
+  useSavePost,
+} from "@/lib/react-query/queries";
 import { formatDate } from "@/lib/utils";
 import { Models } from "appwrite";
-import { MessageCircle, Send } from "lucide-react";
+import { Loader, MessageCircle, Send } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import like from "../assets/Images/Icons/like.svg";
 import liked from "../assets/Images/Icons/liked.svg";
 import save from "../assets/Images/Icons/save.svg";
@@ -15,12 +20,24 @@ type PostStatsProp = {
 };
 
 const PostStats = ({ post, userId }: PostStatsProp) => {
-  const isSaved = false;
-
   const likeList = post.likes.map((user: Models.Document) => user.$id);
 
   const [likes, setLikes] = useState<Array<string>>(likeList);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
   const { mutateAsync: likePost } = useLikePost();
+  const { mutateAsync: savePost, isPending: isSavingPost } = useSavePost();
+  const { mutateAsync: deleteSavedPost, isPending: isDeletingSavedPost } =
+    useDeleteSavedPost();
+
+  const { data: currentUser } = useGetCurrentUser();
+
+  const savedPostRecord = currentUser?.save.find(
+    (record: Models.Document) => record.post.$id === post.$id,
+  );
+
+  useEffect(() => {
+    setIsSaved(!!savedPostRecord);
+  }, [currentUser]);
 
   const handleLike = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
     e.stopPropagation();
@@ -36,6 +53,23 @@ const PostStats = ({ post, userId }: PostStatsProp) => {
     setLikes(likesArray);
     likePost({ postId: post.$id, likesArray });
   };
+
+  const handleSavePost = (
+    e: React.MouseEvent<HTMLImageElement, MouseEvent>,
+  ) => {
+    e.stopPropagation();
+
+    if (savedPostRecord) {
+      setIsSaved(false);
+      deleteSavedPost(savedPostRecord.$id);
+
+      return;
+    }
+
+    savePost({ postId: post.$id, userId });
+    setIsSaved(true);
+  };
+
   const isLiked = likes.includes(userId);
 
   return (
@@ -54,16 +88,21 @@ const PostStats = ({ post, userId }: PostStatsProp) => {
           <Send className="cursor-pointer w-7 h-7" />
         </div>
         <div>
-          <Image
-            src={isSaved ? saved : save}
-            alt="save"
-            width={100}
-            height={100}
-            className="w-8 h-8 cursor-pointer"
-          />
+          {isSavingPost || isDeletingSavedPost ? (
+            <Loader />
+          ) : (
+            <Image
+              src={isSaved ? saved : save}
+              alt="save"
+              width={100}
+              height={100}
+              className="w-8 h-8 cursor-pointer"
+              onClick={(e) => handleSavePost(e)}
+            />
+          )}
         </div>
       </div>
-      <p>10 likes</p>
+      <p>{likes.length}</p>
       <p>{`${post.creator.name} ${post.caption}`}</p>
       <p>{formatDate(post.$createdAt)}</p>
     </div>

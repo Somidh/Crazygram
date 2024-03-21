@@ -49,7 +49,6 @@ const SignUpForm = () => {
   const handleSignUp = async (user: z.infer<typeof SignUpValidations>) => {
     try {
       const newUser = await createUserAccount(user);
-      // console.log({ newUser });
 
       if (!newUser) {
         return toast({ title: "Sign up failed. hola." });
@@ -65,7 +64,6 @@ const SignUpForm = () => {
       }
 
       const isLoggedIn = await checkAuthUser();
-      console.log(isLoggedIn);
 
       if (isLoggedIn) {
         form.reset();
