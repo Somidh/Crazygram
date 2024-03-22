@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-import { Typography } from "@/components/typography";
 import { useGetPostById } from "@/lib/react-query/queries";
 import { TComment } from "@/types";
 import { useParams } from "next/navigation";
@@ -138,13 +137,14 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
         deleteLocalComment,
       }}
     >
-      {isLoading ? (
+      {/* {isLoading ? (
         <Typography variant={"h1"}>Loading...</Typography>
       ) : error ? (
         <Typography variant={"h1"}>{error.message}</Typography>
       ) : (
         children
-      )}
+      )} */}
+      {children}
     </Context.Provider>
   );
 };

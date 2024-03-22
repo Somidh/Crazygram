@@ -72,7 +72,7 @@ const CommentForm = ({
   ) {
     if (!post || !currentUser) {
       return (
-        <div className="flex-center w-full h-full">
+        <div className="flex items-center justify-center w-full h-full">
           <Loader />
         </div>
       );

@@ -29,7 +29,7 @@ const PostDetailsPage = ({
   return (
     <div className="max-w-md mx-auto">
       <PostCard post={post} />
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-lg mx-auto mb-20">
         <div className="mt-10">
           <CommentForm action="Comment" />
         </div>

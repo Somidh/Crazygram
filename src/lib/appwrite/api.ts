@@ -177,15 +177,19 @@ export async function updatePost(post: TUpdatePost) {
   }
 }
 
-export async function deletePost(postId: string, imageId: string) {
-  if (!postId || !imageId) throw Error;
+export async function deletePost(postId?: string, imageId?: string) {
+  if (!postId || !imageId) return;
 
   try {
-    await databases.deleteDocument(
+    const status = await databases.deleteDocument(
       appwriteConfig.databaseId,
       appwriteConfig.postCollectionId,
       postId,
     );
+
+    if (!status) throw Error;
+
+    await deleteFile(imageId);
 
     return { status: "OK" };
   } catch (error) {
@@ -319,6 +323,7 @@ export async function followUser(
       userId,
       { following: followingArray },
     );
+    console.log("SUCCESFUL FOLLOWING");
     if (!updateFollowing) throw Error;
 
     const updateFollowers = await databases.updateDocument(
@@ -327,6 +332,7 @@ export async function followUser(
       followerId,
       { followers: followersArray },
     );
+    console.log("SUCCESFUL FOLLOWERS");
 
     if (!updateFollowers) throw Error;
 

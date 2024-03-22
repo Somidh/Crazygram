@@ -2,10 +2,13 @@
 
 import { Typography } from "@/components/typography";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import { useUserContext } from "@/context/AuthContext";
+import { useFollowUser } from "@/lib/react-query/queries";
 import { Models } from "appwrite";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 type UserProfileHeaderProps = {
   user: Models.Document;
@@ -38,6 +41,43 @@ export const UserProfileHeader = ({ user }: UserProfileHeaderProps) => {
 
   const { user: currentUser } = useUserContext();
   const isCurrentUser = currentUser.id === user.$id;
+  const { mutateAsync: followUser } = useFollowUser();
+
+  const [following, setFollowing] = useState<Array<string>>(user.following);
+  const [followers, setFollowers] = useState<Array<string>>(user.followers);
+
+  const { toast } = useToast();
+
+  const handleFollow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    let followingArray = [...following];
+    let followersArray = [...followers];
+
+    if (followingArray.includes(user.$id)) {
+      followingArray = followingArray.filter(
+        (followingId) => followingId !== user.$id,
+      );
+      followersArray = followersArray.filter(
+        (followersId) => followersId !== user.id,
+      );
+    } else {
+      followingArray.push(user.$id);
+      followersArray.push(user.$id);
+      toast({ title: "Followed success" });
+    }
+
+    setFollowing(followingArray);
+    setFollowers(followersArray);
+    followUser({
+      userId: user.$id,
+      followerId: user.$id,
+      followingArray,
+      followersArray,
+    });
+  };
+
+  const isFollowing = following?.includes(user.$id);
 
   return (
     <header className="flex items-start gap-6 ">
@@ -62,9 +102,10 @@ export const UserProfileHeader = ({ user }: UserProfileHeaderProps) => {
             </Typography>
           </div>
           {!isCurrentUser && (
-            <div>
-              <Button>Follow</Button>
-            </div>
+            <Button onClick={(e) => handleFollow(e)}>
+              {" "}
+              {isFollowing ? "Unfollow" : "Follow"}
+            </Button>
           )}
         </div>
         {/* USER STATS */}
