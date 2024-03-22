@@ -4,15 +4,20 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useUserContext } from "@/context/AuthContext";
-import { useFollowUser } from "@/lib/react-query/queries";
+import {
+  useDeletePost,
+  useFollowUser,
+  useGetCurrentUser,
+} from "@/lib/react-query/queries";
 import { Models } from "appwrite";
-import { SquarePen } from "lucide-react";
+import { SquarePen, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import ellipsis from "../assets/Images/Icons/ellipsis-vertical.svg";
 import PostStats from "./PostStats";
 import { Typography } from "./typography";
+import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
 
 type PostCardProp = {
@@ -22,6 +27,8 @@ type PostCardProp = {
 export const PostCard = ({ post }: PostCardProp) => {
   const { user } = useUserContext();
   const { mutateAsync: followUser } = useFollowUser();
+  const { mutate: deletePost } = useDeletePost();
+  const { data: currentUser } = useGetCurrentUser();
 
   const [following, setFollowing] = useState<Array<string>>(user.following);
   const [followers, setFollowers] = useState<Array<string>>(
@@ -30,6 +37,8 @@ export const PostCard = ({ post }: PostCardProp) => {
   const { toast } = useToast();
 
   if (!post.creator) return;
+
+  console.log({ currentUser });
 
   const handleFollow = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -60,6 +69,10 @@ export const PostCard = ({ post }: PostCardProp) => {
     });
   };
   const isFollowing = following?.includes(post.creator.$id);
+
+  // const handleDeletePost = () => {
+  //   deletePost({ postId: post.$id, imageId: post?.imageId });
+  // };
 
   return (
     <div className="w-full  ">
@@ -93,12 +106,26 @@ export const PostCard = ({ post }: PostCardProp) => {
           </PopoverTrigger>
           <PopoverContent>
             {user.id === post.creator.$id && (
-              <Link href={`/update-post/${post.$id}`}>
-                <div className="flex items-center gap-2">
-                  <SquarePen />
-                  <Typography variant={"muted"}>Edit</Typography>
-                </div>
-              </Link>
+              <div className="flex flex-col gap-4">
+                <Button variant={"ghost"} className="items-start justify-start">
+                  <Link href={`/update-post/${post.$id}`}>
+                    <div className="flex items-center gap-2">
+                      <SquarePen />
+                      <Typography variant={"muted"}>Edit</Typography>
+                    </div>
+                  </Link>
+                </Button>
+                <Button
+                  variant={"ghost"}
+                  className="items-start justify-start"
+                  // onClick={handleDeletePost}
+                >
+                  <div className="flex items-center gap-2">
+                    <Trash2 />
+                    <Typography variant={"muted"}>Delete</Typography>
+                  </div>
+                </Button>
+              </div>
             )}
           </PopoverContent>
         </Popover>

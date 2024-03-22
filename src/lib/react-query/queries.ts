@@ -165,7 +165,7 @@ export const useGetPosts = () => {
 
       return lastId;
     },
-    initialPageParam: {},
+    initialPageParam: 0,
   });
 };
 

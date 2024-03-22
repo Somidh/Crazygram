@@ -8,11 +8,13 @@ import { formatDate } from "@/lib/utils";
 import { Models } from "appwrite";
 import { Loader, MessageCircle, Send } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import like from "../assets/Images/Icons/like.svg";
 import liked from "../assets/Images/Icons/liked.svg";
 import save from "../assets/Images/Icons/save.svg";
 import saved from "../assets/Images/Icons/saved.svg";
+import { Typography } from "./typography";
 
 type PostStatsProp = {
   post: Models.Document;
@@ -74,16 +76,19 @@ const PostStats = ({ post, userId }: PostStatsProp) => {
 
   return (
     <div>
-      <div className="flex items-center justify-between w-full ">
-        <div className="flex items-center gap-4">
-          <Image
-            src={isLiked ? liked : like}
-            alt="like"
-            width={100}
-            height={100}
-            className="w-7 h-7 cursor-pointer"
-            onClick={(e) => handleLike(e)}
-          />
+      <div className="flex items-start justify-between w-full ">
+        <div className="flex items-start gap-4">
+          <div className="text-center">
+            <Image
+              src={isLiked ? liked : like}
+              alt="like"
+              width={100}
+              height={100}
+              className="w-7 h-7 cursor-pointer"
+              onClick={(e) => handleLike(e)}
+            />
+            <p>{likes.length}</p>
+          </div>
           <MessageCircle className="cursor-pointer w-7 h-7" />
           <Send className="cursor-pointer w-7 h-7" />
         </div>
@@ -102,9 +107,15 @@ const PostStats = ({ post, userId }: PostStatsProp) => {
           )}
         </div>
       </div>
-      <p>{likes.length}</p>
-      <p>{`${post.creator.name} ${post.caption}`}</p>
-      <p>{formatDate(post.$createdAt)}</p>
+      <div className="flex flex-col">
+        <div className="flex items-center gap-2">
+          <Link href={`/${post.creator.$id}`} className="text-bold">
+            @{post.creator.username}
+          </Link>
+          <Typography variant={"small"}>{` ${post.caption}`}</Typography>
+        </div>
+        <Typography variant={"small"}>{formatDate(post.$createdAt)}</Typography>
+      </div>
     </div>
   );
 };
