@@ -13,12 +13,10 @@ import { Models } from "appwrite";
 import { SquarePen, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 import ellipsis from "../assets/Images/Icons/ellipsis-vertical.svg";
 import PostStats from "./PostStats";
 import { Typography } from "./typography";
 import { Button } from "./ui/button";
-import { useToast } from "./ui/use-toast";
 
 type PostCardProp = {
   post: Models.Document;
@@ -30,49 +28,47 @@ export const PostCard = ({ post }: PostCardProp) => {
   const { mutate: deletePost } = useDeletePost();
   const { data: currentUser } = useGetCurrentUser();
 
-  const [following, setFollowing] = useState<Array<string>>(user.following);
-  const [followers, setFollowers] = useState<Array<string>>(
-    post.creator.followers,
-  );
-  const { toast } = useToast();
+  // const [following, setFollowing] = useState<Array<string>>(user.following);
+  // const [followers, setFollowers] = useState<Array<string>>(
+  //   post.creator.followers,
+  // );
+  // const { toast } = useToast();
 
   if (!post.creator) return;
 
-  console.log({ currentUser });
+  // const handleFollow = (e: React.MouseEvent) => {
+  //   e.stopPropagation();
 
-  const handleFollow = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  //   let followingArray = [...following];
+  //   let followersArray = [...followers];
 
-    let followingArray = [...following];
-    let followersArray = [...followers];
+  //   if (followingArray.includes(post.creator.$id)) {
+  //     followingArray = followingArray.filter(
+  //       (followingId) => followingId !== post.creator.$id,
+  //     );
+  //     followersArray = followersArray.filter(
+  //       (followersId) => followersId !== user.id,
+  //     );
+  //   } else {
+  //     followingArray.push(post?.creator?.$id);
+  //     followersArray.push(user.id);
+  //     toast({ title: "Followed success" });
+  //   }
 
-    if (followingArray.includes(post.creator.$id)) {
-      followingArray = followingArray.filter(
-        (followingId) => followingId !== post.creator.$id,
-      );
-      followersArray = followersArray.filter(
-        (followersId) => followersId !== user.id,
-      );
-    } else {
-      followingArray.push(post?.creator?.$id);
-      followersArray.push(user.id);
-      toast({ title: "Followed success" });
-    }
-
-    setFollowing(followingArray);
-    setFollowers(followersArray);
-    followUser({
-      userId: user.id,
-      followerId: post.creator.$id,
-      followingArray,
-      followersArray,
-    });
-  };
-  const isFollowing = following?.includes(post.creator.$id);
-
-  // const handleDeletePost = () => {
-  //   deletePost({ postId: post.$id, imageId: post?.imageId });
+  //   setFollowing(followingArray);
+  //   setFollowers(followersArray);
+  //   followUser({
+  //     userId: user.id,
+  //     followerId: post.creator.$id,
+  //     followingArray,
+  //     followersArray,
+  //   });
   // };
+  // const isFollowing = following?.includes(post.creator.$id);
+
+  const handleDeletePost = () => {
+    deletePost({ postId: post.$id, imageId: post?.imageId });
+  };
 
   return (
     <div className="w-full  ">
@@ -100,35 +96,40 @@ export const PostCard = ({ post }: PostCardProp) => {
             {isFollowing ? "Unfollow" : "Follow"}
           </Button>
         )} */}
-        <Popover>
-          <PopoverTrigger>
-            <Image src={ellipsis} width={20} height={20} alt="options" />
-          </PopoverTrigger>
-          <PopoverContent>
-            {user.id === post.creator.$id && (
-              <div className="flex flex-col gap-4">
-                <Button variant={"ghost"} className="items-start justify-start">
-                  <Link href={`/update-post/${post.$id}`}>
+        {user.id === post.creator.$id && (
+          <Popover>
+            <PopoverTrigger>
+              <Image src={ellipsis} width={20} height={20} alt="options" />
+            </PopoverTrigger>
+            <PopoverContent>
+              {user.id === post.creator.$id && (
+                <div className="flex flex-col gap-4">
+                  <Button
+                    variant={"ghost"}
+                    className="items-start justify-start"
+                  >
+                    <Link href={`/update-post/${post.$id}`}>
+                      <div className="flex items-center gap-2">
+                        <SquarePen />
+                        <Typography variant={"muted"}>Edit</Typography>
+                      </div>
+                    </Link>
+                  </Button>
+                  <Button
+                    variant={"ghost"}
+                    className="items-start justify-start"
+                    onClick={handleDeletePost}
+                  >
                     <div className="flex items-center gap-2">
-                      <SquarePen />
-                      <Typography variant={"muted"}>Edit</Typography>
+                      <Trash2 />
+                      <Typography variant={"muted"}>Delete</Typography>
                     </div>
-                  </Link>
-                </Button>
-                <Button
-                  variant={"ghost"}
-                  className="items-start justify-start"
-                  // onClick={handleDeletePost}
-                >
-                  <div className="flex items-center gap-2">
-                    <Trash2 />
-                    <Typography variant={"muted"}>Delete</Typography>
-                  </div>
-                </Button>
-              </div>
-            )}
-          </PopoverContent>
-        </Popover>
+                  </Button>
+                </div>
+              )}
+            </PopoverContent>
+          </Popover>
+        )}
       </div>
 
       {/* POST IMAGE */}
