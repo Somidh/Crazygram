@@ -65,7 +65,6 @@ export async function signInAccount(user: { email: string; password: string }) {
 export async function signOutAccount() {
   try {
     const session = await account.deleteSession("current");
-    console.log("Signing out");
     return session;
   } catch (error) {
     console.log(error);
@@ -323,7 +322,6 @@ export async function followUser(
       userId,
       { following: followingArray },
     );
-    console.log("SUCCESFUL FOLLOWING");
     if (!updateFollowing) throw Error;
 
     const updateFollowers = await databases.updateDocument(
@@ -332,7 +330,6 @@ export async function followUser(
       followerId,
       { followers: followersArray },
     );
-    console.log("SUCCESFUL FOLLOWERS");
 
     if (!updateFollowers) throw Error;
 

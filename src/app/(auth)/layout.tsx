@@ -14,25 +14,30 @@ export default function AuthLayout({
   const { isAuthenticated } = useUserContext();
   const router = useRouter();
 
+  // if (!isAuthenticated) {
+  //   router.push("/signIn");
+  //   return;
+  // }
+
   return (
     <>
-      {/* {isAuthenticated ? (
+      {isAuthenticated ? (
         router.push("/")
-      ) : ( */}
-      <div className="flex">
-        <section className="flex flex-1 items-center justify-center flex-col py-10">
-          {children}
-        </section>
+      ) : (
+        <div className="flex">
+          <section className="flex flex-1 items-center justify-center flex-col py-10">
+            {children}
+          </section>
 
-        <Image
-          src={sideImage}
-          alt="side-img"
-          width={500}
-          height={100}
-          className="hidden xl:block h-screen w-1/2 object-cover bg-no-repeat"
-        />
-      </div>
-      {/* )} */}
+          <Image
+            src={sideImage}
+            alt="side-img"
+            width={500}
+            height={100}
+            className="hidden xl:block h-screen w-1/2 object-cover bg-no-repeat"
+          />
+        </div>
+      )}
     </>
   );
 }

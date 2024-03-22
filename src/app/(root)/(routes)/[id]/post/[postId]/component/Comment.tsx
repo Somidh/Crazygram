@@ -42,9 +42,6 @@ const Comment = ({ comment }: { comment: TComment }) => {
   if (!user) {
     return <div>loading...</div>;
   }
-  if (isSuccess) {
-    console.log("comment deleted succfully");
-  }
 
   function handleLike(e: React.MouseEvent<HTMLImageElement, MouseEvent>) {
     e.stopPropagation();

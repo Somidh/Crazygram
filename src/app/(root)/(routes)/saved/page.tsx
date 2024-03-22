@@ -21,8 +21,6 @@ const Saved = () => {
     }))
     .reverse();
 
-  console.log({ savePosts });
-
   return (
     <div className="max-w-3xl mx-auto">
       <div className="flex gap-2 w-full max-w-5xl items-center mb-5">
