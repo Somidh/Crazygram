@@ -24,8 +24,6 @@ const PostDetailsPage = ({
       </div>
     );
 
-  console.log({ post });
-
   return (
     <div className="max-w-md mx-auto">
       <PostCard post={post} />

@@ -64,12 +64,24 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  // useEffect(() => {
+  //   if (
+  //     localStorage.getItem("cookieFallback") === "[]" ||
+  //     localStorage.getItem("cookieFallback") === null
+  //   ) {
+  //     router.push("/signIn");
+  //   }
+
+  //   checkAuthUser();
+  // }, []);
   useEffect(() => {
+    const cookieFallback = localStorage.getItem("cookieFallback");
     if (
-      localStorage.getItem("cookieFallback") === "[]" ||
-      localStorage.getItem("cookieFallback") === null
+      cookieFallback === "[]" ||
+      cookieFallback === null ||
+      cookieFallback === undefined
     ) {
-      router.push("/signIn");
+      router.push("signIn");
     }
 
     checkAuthUser();

@@ -1,33 +1,24 @@
 "use client";
 
-import React from "react";
-import { Typography } from "./typography";
-import Image from "next/image";
-
-import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
-import { useTheme } from "next-themes";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
+import { useTheme } from "next-themes";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "./ui/button";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useUserContext } from "@/context/AuthContext";
-import Link from "next/link";
 import { useSignOutAccount } from "@/lib/react-query/queries";
-import { Loader } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import Logo from "./Logo";
+import { Button } from "./ui/button";
 
 type NavbarProp = {
   imageUrl: string;
@@ -35,8 +26,17 @@ type NavbarProp = {
 
 const Navbar = () => {
   const { setTheme } = useTheme();
-  const { mutateAsync: signOut, isPending: isSigningOut } = useSignOutAccount();
+  const {
+    mutateAsync: signOut,
+    isPending: isSigningOut,
+    isSuccess,
+  } = useSignOutAccount();
   const { user, isAuthenticated } = useUserContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isSuccess) router.push("/signIn");
+  }, [isSuccess]);
 
   return (
     <nav className="flex items-center justify-between w-full px-4 py-8">
@@ -82,7 +82,7 @@ const Navbar = () => {
                 <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuItem disabled>API</DropdownMenuItem>
                 <DropdownMenuSeparator /> */}
-            <DropdownMenuItem onClick={() => signOut}>
+            <DropdownMenuItem onClick={() => signOut()}>
               {/* {isSigningOut ? <Loader /> : "Log out"} */}
               Log out
             </DropdownMenuItem>

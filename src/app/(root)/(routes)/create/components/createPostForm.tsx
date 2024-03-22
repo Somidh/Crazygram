@@ -42,8 +42,6 @@ export const CreatePostForm = ({ post, action }: CreatePostFormProps) => {
     },
   });
 
-  console.log({ post });
-
   const { mutateAsync: createPost, isPending: isCreatingPost } =
     useCreatePost();
   const { mutateAsync: updatePost, isPending: isUpdatingPost } =

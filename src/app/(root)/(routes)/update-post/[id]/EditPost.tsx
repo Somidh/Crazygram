@@ -8,12 +8,9 @@ import { CreatePostForm } from "../../create/components/createPostForm";
 
 const EditPost = () => {
   const params = useParams<{ id: string }>();
-  console.log(params.id);
   const { data: post, isPending } = useGetPostById(params.id || "");
 
   if (isPending) return <Loader className="mx-auto " />;
-
-  // console.log({ post });
 
   return (
     <div className="max-w-5xl mx-auto">
