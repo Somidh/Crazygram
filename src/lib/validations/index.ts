@@ -26,7 +26,7 @@ export const PostValidation = z.object({
   caption: z.string().min(2).max(2200),
   file: z.custom<File[]>(),
   location: z.string(),
-  altText: z.string().min(2).max(40),
+  altText: z.string(),
 });
 
 export const CommentFormValidation = z.object({

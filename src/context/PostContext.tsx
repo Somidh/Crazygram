@@ -73,11 +73,7 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
 
   function getReplies(parentId: string): TComment[] | undefined {
     const replies = commentByParentId[parentId];
-    // if (replies) {
-    // Assuming TComment can be directly cast to Comment
     return replies as TComment[];
-    // }
-    // return undefined;
   }
   function createLocalComment(comment: TComment) {
     setComments((prevComments: TComment[]) => {
@@ -137,13 +133,6 @@ const PostProvider = ({ children }: { children: React.ReactNode }) => {
         deleteLocalComment,
       }}
     >
-      {/* {isLoading ? (
-        <Typography variant={"h1"}>Loading...</Typography>
-      ) : error ? (
-        <Typography variant={"h1"}>{error.message}</Typography>
-      ) : (
-        children
-      )} */}
       {children}
     </Context.Provider>
   );

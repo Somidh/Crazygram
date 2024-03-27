@@ -39,6 +39,7 @@ const Comment = ({ comment }: { comment: TComment }) => {
   const childComments = getReplies(comment?.id) || [];
 
   const [likes, setLikes] = useState<Array<string>>(comment.likes);
+
   if (!user) {
     return <div>loading...</div>;
   }

@@ -32,11 +32,7 @@ const PostDetailsPage = ({
           <CommentForm action="Comment" />
         </div>
         <div className="mt-5">
-          <CommentList
-            post={post}
-            // comments={rootComments?.flatMap((comment) => comment)}
-            comments={flattenedComments}
-          />
+          <CommentList post={post} comments={flattenedComments} />
         </div>
       </div>
     </div>
